@@ -297,7 +297,7 @@ class Orchestrator:
             if not any_action_executed:
                 self.shared_data.bjornorch_status = "IDLE"
                 self.shared_data.bjornstatustext2 = ""
-                logger.info("No available targets. Running network scan...")
+                logger.info("No available цельs. Работает network scan...")
                 if self.network_scanner:
                     self.shared_data.bjornorch_status = "NetworkScanner"
                     self.network_scanner.scan()
@@ -308,7 +308,7 @@ class Orchestrator:
                         current_time = datetime.now()
                         if current_time >= self.last_vuln_scan_time + timedelta(seconds=self.shared_data.scan_vuln_interval):
                             try:
-                                logger.info("Starting vulnerability scans...")
+                                logger.info("Запуск vulnerability scans...")
                                 for row in current_data:
                                     if row["Alive"] == '1':
                                         ip = row["IPs"]

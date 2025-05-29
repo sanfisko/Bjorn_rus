@@ -1,34 +1,43 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Сообщение об ошибке
+about: Создайте отчёт, чтобы помочь нам улучшить проект
 title: ""
 labels: ""
 assignees: ""
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Описание ошибки**
+Ясное и краткое описание ошибки.
 
-**To Reproduce**
-Steps to reproduce the behavior:
+**Шаги для воспроизведения**
+Шаги для воспроизведения поведения:
 
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. Перейдите к '...'
+2. Нажмите на '....'
+3. Прокрутите вниз до '....'
+4. Увидьте ошибку
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Ожидаемое поведение**
+Ясное и краткое описание того, что вы ожидали.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Скриншоты**
+Если применимо, добавьте скриншоты, чтобы помочь объяснить вашу проблему.
 
-**Hardware (please complete the following information):**
+**Оборудование (пожалуйста, заполните следующую информацию):**
 
-- Device: [e.g. iPhone6]
-- OS: [e.g. iOS]
-- Browser [e.g. chrome, safari]
-- Version [e.g. 22]
+- Устройство: [например, Raspberry Pi Zero W]
+- ОС: [например, Raspberry Pi OS]
+- Браузер: [например, chrome, firefox]
+- Версия: [например, 22]
+- Версия Python: [например, 3.9]
+- Версия Bjorn: [например, 1.0.0]
 
-**Additional context**
-Add any other context about the problem here.
+**Логи**
+Если возможно, приложите соответствующие логи:
+
+```
+Вставьте логи здесь
+```
+
+**Дополнительный контекст**
+Добавьте любой другой контекст о проблеме здесь.

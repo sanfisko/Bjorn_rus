@@ -418,7 +418,7 @@ class SharedData:
     def load_config(self):
         """Load the configuration from the shared configuration JSON file."""
         try:
-            logger.info("Loading configuration...")
+            logger.info("Загрузка конфигурации...")
             if os.path.exists(self.shared_config_json):
                 with open(self.shared_config_json, 'r') as f:
                     config = json.load(f)
@@ -431,7 +431,7 @@ class SharedData:
                 self.load_config()
                 time.sleep(2)
         except FileNotFoundError:
-            logger.error("Error loading configuration: File not found.")
+            logger.error("Ошибка loading configuration: Файл не найден.")
             self.save_config()
 
     def save_config(self):

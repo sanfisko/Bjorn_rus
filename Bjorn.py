@@ -61,39 +61,39 @@ class Bjorn:
                 self.start_orchestrator()
         else:
             self.wifi_connected = False
-            logger.info("Waiting for Wi-Fi connection to start Orchestrator...")
+            logger.info("Ожидание Wi-Fi соединения для запуска Оркестратора...")
 
     def start_orchestrator(self):
         """Start the orchestrator thread."""
         self.is_wifi_connected() # reCheck if Wi-Fi is connected before starting the orchestrator
         if self.wifi_connected:  # Check if Wi-Fi is connected before starting the orchestrator
             if self.orchestrator_thread is None or not self.orchestrator_thread.is_alive():
-                logger.info("Starting Orchestrator thread...")
+                logger.info("Запуск потока Оркестратора...")
                 self.shared_data.orchestrator_should_exit = False
                 self.shared_data.manual_mode = False
                 self.orchestrator = Orchestrator()
                 self.orchestrator_thread = threading.Thread(target=self.orchestrator.run)
                 self.orchestrator_thread.start()
-                logger.info("Orchestrator thread started, automatic mode activated.")
+                logger.info("Поток Оркестратора запущен, автоматический режим активирован.")
             else:
-                logger.info("Orchestrator thread is already running.")
+                logger.info("Поток Оркестратора уже запущен.")
         else:
-            logger.warning("Cannot start Orchestrator: Wi-Fi is not connected.")
+            logger.warning("Невозможно запустить Оркестратор: Wi-Fi не подключен.")
 
     def stop_orchestrator(self):
         """Stop the orchestrator thread."""
         self.shared_data.manual_mode = True
-        logger.info("Stop button pressed. Manual mode activated & Stopping Orchestrator...")
+        logger.info("Нажата кнопка остановки. Активирован ручной режим и остановка Оркестратора...")
         if self.orchestrator_thread is not None and self.orchestrator_thread.is_alive():
-            logger.info("Stopping Orchestrator thread...")
+            logger.info("Остановка потока Оркестратора...")
             self.shared_data.orchestrator_should_exit = True
             self.orchestrator_thread.join()
-            logger.info("Orchestrator thread stopped.")
+            logger.info("Поток Оркестратора остановлен.")
             self.shared_data.bjornorch_status = "IDLE"
             self.shared_data.bjornstatustext2 = ""
             self.shared_data.manual_mode = True
         else:
-            logger.info("Orchestrator thread is not running.")
+            logger.info("Orchestrator поток is not running.")
 
     def is_wifi_connected(self):
         """Checks for Wi-Fi connectivity using the nmcli command."""
@@ -129,24 +129,24 @@ def handle_exit(sig, frame, display_thread, bjorn_thread, web_thread):
 
 
 if __name__ == "__main__":
-    logger.info("Starting threads")
+    logger.info("Запуск потокs")
 
     try:
         logger.info("Loading shared data config...")
         shared_data.load_config()
 
-        logger.info("Starting display thread...")
+        logger.info("Запуск display поток...")
         shared_data.display_should_exit = False  # Initialize display should_exit
         display_thread = Bjorn.start_display()
 
-        logger.info("Starting Bjorn thread...")
+        logger.info("Запуск Bjorn поток...")
         bjorn = Bjorn(shared_data)
         shared_data.bjorn_instance = bjorn  # Assigner l'instance de Bjorn à shared_data
         bjorn_thread = threading.Thread(target=bjorn.run)
         bjorn_thread.start()
 
         if shared_data.config["websrv"]:
-            logger.info("Starting the web server...")
+            logger.info("Запуск the web server...")
             web_thread.start()
 
         signal.signal(signal.SIGINT, lambda sig, frame: handle_exit(sig, frame, display_thread, bjorn_thread, web_thread))
