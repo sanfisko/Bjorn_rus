@@ -50,7 +50,7 @@ https://www.raspberrypi.com/software/
 
 ```bash
 # Скачайте и запустите установщик
-wget https://raw.githubusercontent.com/infinition/Bjorn/refs/heads/main/install_bjorn.sh
+wget https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh
 sudo chmod +x install_bjorn.sh && sudo ./install_bjorn.sh
 # Выберите вариант 1 для автоматической установки. Это может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
 ```
@@ -74,8 +74,8 @@ sudo apt install -y python3 python3-pip git
 #### Шаг 3: Клонирование репозитория
 
 ```bash
-git clone https://github.com/infinition/Bjorn.git
-cd Bjorn
+git clone https://github.com/sanfisko/Bjorn_rus.git
+cd Bjorn_rus
 ```
 
 #### Шаг 4: Установка Python зависимостей

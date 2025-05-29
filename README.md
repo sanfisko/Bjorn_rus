@@ -42,7 +42,7 @@ Bjorn - это мощный инструмент, предназначенный
 - **Кража файлов**: Извлекает данные из уязвимых сервисов.
 - **Пользовательский интерфейс**: Отображение в реальном времени на e-Paper HAT и веб-интерфейс для мониторинга и взаимодействия.
 
-![Bjorn Display](https://github.com/infinition/Bjorn/assets/37984399/bcad830d-77d6-4f3e-833d-473eadd33921)
+![Bjorn Display](https://github.com/sanfisko/Bjorn_rus/assets/37984399/bcad830d-77d6-4f3e-833d-473eadd33921)
 
 ## 🚀 Начало работы
 
@@ -84,7 +84,7 @@ Bjorn - это мощный инструмент, предназначенный
 
 ```bash
 # Скачайте и запустите установщик
-wget https://raw.githubusercontent.com/infinition/Bjorn/refs/heads/main/install_bjorn.sh
+wget https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh
 sudo chmod +x install_bjorn.sh && sudo ./install_bjorn.sh
 # Выберите вариант 1 для автоматической установки. Это может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
 ```
@@ -96,7 +96,7 @@ sudo chmod +x install_bjorn.sh && sudo ./install_bjorn.sh
 **Нужна помощь? Не можете найти IP-адрес Bjorn после установки?**
 Используйте мой Bjorn Detector & SSH Launcher:
 
-[https://github.com/infinition/bjorn-detector](https://github.com/infinition/bjorn-detector)
+[https://github.com/sanfisko/bjorn-detector](https://github.com/sanfisko/bjorn-detector)
 
 ![ezgif-1-a310f5fe8f](https://github.com/user-attachments/assets/182f82f0-5c3a-48a9-a75e-37b9cfa2263a)
 
@@ -164,11 +164,11 @@ Bjorn разработан как управляемая сообществом 
   - Предоставляйте логи и контекст.
 
 - **Автор**: __infinition__
-- **GitHub**: [infinition/Bjorn](https://github.com/infinition/Bjorn)
+- **GitHub**: [sanfisko/Bjorn_rus](https://github.com/sanfisko/Bjorn_rus)
 
 ## 🌠 Звёздочки
 
-[![Star History Chart](https://api.star-history.com/svg?repos=infinition/bjorn&type=Date)](https://star-history.com/#infinition/bjorn&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sanfisko/Bjorn_rus&type=Date)](https://star-history.com/#sanfisko/Bjorn_rus&Date)
 
 ---
 

@@ -302,11 +302,11 @@ setup_bjorn() {
     else
         # No existing directory, proceed with clone
         log "INFO" "Cloning BJORN repository"
-        git clone https://github.com/infinition/Bjorn.git
+        git clone https://github.com/sanfisko/Bjorn_rus.git
         check_success "Cloned BJORN repository"
     fi
 
-    cd Bjorn
+    cd Bjorn_rus
 
     # Update the shared_config.json file with the selected EPD version
     log "INFO" "Updating E-Paper display configuration..."
