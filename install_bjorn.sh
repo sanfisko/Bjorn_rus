@@ -20,7 +20,7 @@ VERBOSE=false
 
 # Global variables
 BJORN_USER="bjorn"
-BJORN_PATH="/home/${BJORN_USER}/Bjorn"
+BJORN_PATH="/home/${BJORN_USER}/Bjorn_rus"
 CURRENT_STEP=0
 TOTAL_STEPS=8
 

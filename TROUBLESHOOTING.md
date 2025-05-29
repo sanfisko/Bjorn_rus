@@ -68,11 +68,11 @@ ip addr show
 
 ```bash
 # Проверка владельца файлов
-ls -la /path/to/bjorn/
+ls -la /path/to/bjorn_rus/
 
 # Исправление разрешений
-sudo chown -R bjorn:bjorn /path/to/bjorn/
-sudo chmod +x /path/to/bjorn/Bjorn.py
+sudo chown -R bjorn:bjorn /path/to/bjorn_rus/
+sudo chmod +x /path/to/bjorn_rus/Bjorn.py
 ```
 
 ### Проблемы с зависимостями
@@ -208,14 +208,14 @@ ls /dev/i2c*
 sudo systemctl stop bjorn.service
 
 # Сделайте резервную копию данных
-cp -r /path/to/bjorn/data /path/to/backup/
+cp -r /path/to/bjorn_rus/data /path/to/backup/
 
 # Переустановите Bjorn
 sudo ./uninstall_bjorn.sh
 sudo ./install_bjorn.sh
 
 # Восстановите данные (если нужно)
-cp -r /path/to/backup/data /path/to/bjorn/
+cp -r /path/to/backup/data /path/to/bjorn_rus/
 ```
 
 ## 📊 Мониторинг производительности
