@@ -359,9 +359,9 @@ Before=basic.target
 After=local-fs.target
 
 [Service]
-ExecStartPre=/home/bjorn/Bjorn/kill_port_8000.sh
-ExecStart=/usr/bin/python3 /home/bjorn/Bjorn/Bjorn.py
-WorkingDirectory=/home/bjorn/Bjorn
+ExecStartPre=/home/bjorn/Bjorn_rus/kill_port_8000.sh
+ExecStart=/usr/bin/python3 /home/bjorn/Bjorn_rus/Bjorn.py
+WorkingDirectory=/home/bjorn/Bjorn_rus
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
