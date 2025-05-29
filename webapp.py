@@ -182,7 +182,7 @@ class WebThread(threading.Thread):
             finally:
                 if self.httpd:
                     self.httpd.server_close()
-                    logger.info("Web server closed.")
+                    logger.info("Веб-сервер закрыт.")
 
     def shutdown(self):
         """
@@ -191,7 +191,7 @@ class WebThread(threading.Thread):
         if self.httpd:
             self.httpd.shutdown()
             self.httpd.server_close()
-            logger.info("Web server shutdown initiated.")
+            logger.info("Инициировано выключение веб-сервера.")
 
 def handle_exit_web(signum, frame):
     """
@@ -201,7 +201,7 @@ def handle_exit_web(signum, frame):
     if web_thread.is_alive():
         web_thread.shutdown()
         web_thread.join()  # Wait until the web_thread is finished
-    logger.info("Server shutting down...")
+    logger.info("Сервер выключается...")
     sys.exit(0)
 
 # Initialize the web thread
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     try:
         # Start the web server thread
         web_thread.start()
-        logger.info("Web server thread started.")
+        logger.info("Поток веб-сервера запущен.")
     except Exception as e:
         logger.error(f"An exception occurred during web server start: {e}")
         handle_exit_web(signal.SIGINT, None)

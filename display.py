@@ -377,7 +377,7 @@ main_loop = None
 
 if __name__ == "__main__":
     try:
-        logger.info("Starting main loop...")
+        logger.info("Запуск main loop...")
         main_loop = Display(shared_data)
         display_thread = threading.Thread(target=main_loop.run)
         display_thread.start()

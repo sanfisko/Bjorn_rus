@@ -4,8 +4,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Bjorn Community Support
-    url: https://github.com/infinition/bjorn/discussions
+    url: https://github.com/sanfisko/Bjorn_rus/discussions
     about: Please ask and answer questions here.
   - name: Bjorn Security Reports
-    url: https://infinition.github.io/bjorn/SECURITY
+    url: https://sanfisko.github.io/Bjorn_rus/SECURITY
     about: Please report security vulnerabilities here.

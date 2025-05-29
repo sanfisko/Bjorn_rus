@@ -1,7 +1,7 @@
 {
-    "name": "Bjorn Cyberviking",
+    "name": "Bjorn Киберваряг",
     "short_name": "Bjorn",
-    "description": "Bjorn Cyberviking",
+    "description": "Bjorn Киберваряг - Инструмент тестирования на проникновение",
     "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#333",
