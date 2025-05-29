@@ -149,7 +149,7 @@ class WebUtils:
         try:
             log_file_path = self.shared_data.webconsolelog
             if not os.path.exists(log_file_path):
-                subprocess.Popen(f"sudo tail -f /home/bjorn/Bjorn/data/logs/* > {log_file_path}", shell=True)
+                subprocess.Popen(f"sudo tail -f /home/bjorn/Bjorn_rus/data/logs/* > {log_file_path}", shell=True)
 
             with open(log_file_path, 'r') as log_file:
                 log_lines = log_file.readlines()

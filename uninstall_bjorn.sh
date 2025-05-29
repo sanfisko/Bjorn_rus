@@ -48,9 +48,9 @@ stop_services() {
     log "INFO" "Stopping services..."
     
     # Kill any running BJORN processes
-    if pgrep -f "python3 /home/bjorn/Bjorn/Bjorn.py" > /dev/null; then
+    if pgrep -f "python3 /home/bjorn/Bjorn_rus/Bjorn.py" > /dev/null; then
         log "INFO" "Killing BJORN Python process..."
-        pkill -f "python3 /home/bjorn/Bjorn/Bjorn.py"
+        pkill -f "python3 /home/bjorn/Bjorn_rus/Bjorn.py"
     fi
 
     # Stop and disable bjorn service
@@ -133,8 +133,8 @@ reset_system_limits() {
 # Function to remove BJORN files
 remove_bjorn_files() {
     log "INFO" "Removing BJORN files..."
-    if [ -d "/home/bjorn/Bjorn" ]; then
-        rm -rf /home/bjorn/Bjorn
+    if [ -d "/home/bjorn/Bjorn_rus" ]; then
+        rm -rf /home/bjorn/Bjorn_rus
         log "SUCCESS" "BJORN directory removed"
     else
         log "INFO" "BJORN directory not found"
