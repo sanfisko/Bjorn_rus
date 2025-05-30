@@ -403,7 +403,7 @@ class Display:
                     # Show IP address
                     header_text = f"IP: {self.shared_data.ip_address}"
                 
-                draw.text((int(37 * self.scale_factor_x), int(5 * self.scale_factor_y)), header_text, font=self.shared_data.font_viking, fill=0)
+                draw.text((int(30 * self.scale_factor_x), int(5 * self.scale_factor_y)), header_text, font=self.shared_data.font_viking, fill=0)
                 draw.text((int(110 * self.scale_factor_x), int(170 * self.scale_factor_y)), self.manual_mode_txt, font=self.shared_data.font_arial14, fill=0)
                 
                 if self.shared_data.wifi_connected:

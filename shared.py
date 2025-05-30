@@ -463,8 +463,8 @@ class SharedData:
             self.font_arial14 = self.load_font('Arial.ttf', 14)
             self.font_arial11 = self.load_font('Arial.ttf', 11)
             self.font_arial9 = self.load_font('Arial.ttf', 9)
-            self.font_arialbold = self.load_font('Arial.ttf', 12)
-            self.font_viking = self.load_font('vikingtygra.ttf', 13)
+            self.font_arialbold = self.load_font('vikingtygra.ttf', 12)
+            self.font_viking = self.load_font('ArialB.TTF', 11)
 
         except Exception as e:
             logger.error(f"Error loading fonts: {e}")
