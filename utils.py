@@ -761,6 +761,32 @@ method=auto
                 except subprocess.CalledProcessError as e:
                     self.logger.warning(f"Failed to manage wifi-auto-connect service: {e}")
 
+            # Handle manual wifi script management
+            if 'wifi_script_running' in params:
+                try:
+                    if params['wifi_script_running']:
+                        # Start the script manually in background
+                        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wifi_auto_connect.sh')
+                        subprocess.Popen([script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        self.logger.info("WiFi auto-connect script started manually")
+                    else:
+                        # Stop the script by killing the process
+                        subprocess.run("sudo pkill -f wifi_auto_connect.sh", shell=True, check=False)
+                        self.logger.info("WiFi auto-connect script stopped manually")
+                    
+                    # Wait a moment and check the actual status
+                    import time
+                    time.sleep(1)
+                    result = subprocess.run("pgrep -f wifi_auto_connect.sh", shell=True, capture_output=True, text=True)
+                    actual_status = result.returncode == 0
+                    current_config['wifi_script_running'] = actual_status
+                    self.logger.info(f"WiFi script actual status: {actual_status}")
+                    
+                except Exception as e:
+                    self.logger.warning(f"Failed to manage wifi script manually: {e}")
+                    # Set status to false if there was an error
+                    current_config['wifi_script_running'] = False
+
             handler.send_response(200)
             handler.send_header('Content-type', 'application/json')
             handler.end_headers()
@@ -827,6 +853,22 @@ method=auto
             handler.end_headers()
             handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
 
-
-
-
+    def get_wifi_script_status(self, handler):
+        """Get the current status of the WiFi auto-connect script."""
+        try:
+            import subprocess
+            # Check if the script is running
+            result = subprocess.run("pgrep -f wifi_auto_connect.sh", shell=True, capture_output=True, text=True)
+            is_running = result.returncode == 0
+            
+            handler.send_response(200)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            response = {"wifi_script_running": is_running}
+            handler.wfile.write(json.dumps(response).encode('utf-8'))
+            
+        except Exception as e:
+            handler.send_response(500)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))

@@ -123,6 +123,8 @@ function generateConfigForm(config) {
     function loadConfig() {
         fetch('/load_config').then(response => response.json()).then(data => {
             generateConfigForm(data);
+            // Update WiFi script status after form is generated
+            setTimeout(updateWifiScriptStatus, 100);
         });
     }
     
@@ -213,7 +215,14 @@ function generateConfigForm(config) {
     
     document.addEventListener("DOMContentLoaded", function() {
         loadConfig();
-    
+        
+        // Add event listener for wifi_script_running toggle
+        document.addEventListener('change', function(event) {
+            if (event.target.id === 'wifi_script_running') {
+                // Update status immediately after toggle
+                setTimeout(updateWifiScriptStatus, 1500);
+            }
+        });
     });
 
     let fontSize = 12;
@@ -298,5 +307,19 @@ function toggleConfigToolbar() {
         toggleButton.setAttribute('data-open', 'true');
 
     }
+}
+
+function updateWifiScriptStatus() {
+    fetch('/get_wifi_script_status')
+        .then(response => response.json())
+        .then(data => {
+            const wifiScriptCheckbox = document.getElementById('wifi_script_running');
+            if (wifiScriptCheckbox) {
+                wifiScriptCheckbox.checked = data.wifi_script_running;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching WiFi script status:', error);
+        });
 }
 

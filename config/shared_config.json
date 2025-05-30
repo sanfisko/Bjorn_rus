@@ -105,5 +105,6 @@
     "timewait_ftp": 0,
     "timewait_sql": 0,
     "timewait_rdp": 0,
-    "wifi_auto_connect": false
+    "wifi_auto_connect": false,
+    "wifi_script_running": false
 }

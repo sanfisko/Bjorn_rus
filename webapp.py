@@ -112,6 +112,8 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.web_utils.download_file(self)
         elif self.path.startswith('/download_backup'):
             self.web_utils.download_backup(self)
+        elif self.path == '/get_wifi_script_status':
+            self.web_utils.get_wifi_script_status(self)
 
         else:
             super().do_GET()
