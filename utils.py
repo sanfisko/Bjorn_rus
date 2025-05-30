@@ -745,6 +745,22 @@ method=auto
                 json.dump(current_config, f, indent=4)
             self.logger.info("Configuration saved to file")
 
+            # Handle wifi_auto_connect service management
+            if 'wifi_auto_connect' in params:
+                try:
+                    if params['wifi_auto_connect']:
+                        # Enable and start the service
+                        subprocess.run("sudo systemctl enable wifi-auto-connect.service", shell=True, check=True)
+                        subprocess.run("sudo systemctl start wifi-auto-connect.service", shell=True, check=True)
+                        self.logger.info("WiFi auto-connect service enabled and started")
+                    else:
+                        # Stop and disable the service
+                        subprocess.run("sudo systemctl stop wifi-auto-connect.service", shell=True, check=True)
+                        subprocess.run("sudo systemctl disable wifi-auto-connect.service", shell=True, check=True)
+                        self.logger.info("WiFi auto-connect service stopped and disabled")
+                except subprocess.CalledProcessError as e:
+                    self.logger.warning(f"Failed to manage wifi-auto-connect service: {e}")
+
             handler.send_response(200)
             handler.send_header('Content-type', 'application/json')
             handler.end_headers()
@@ -810,6 +826,7 @@ method=auto
             handler.send_header("Content-type", "application/json")
             handler.end_headers()
             handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
+
 
 
 

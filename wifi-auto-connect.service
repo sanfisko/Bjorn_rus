@@ -1,0 +1,17 @@
+[Unit]
+Description=WiFi Auto Connect Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/bjorn/Bjorn_rus/wifi_auto_connect.sh
+WorkingDirectory=/home/bjorn/Bjorn_rus
+Restart=always
+RestartSec=10
+User=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

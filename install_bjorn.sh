@@ -378,9 +378,13 @@ EOF
     echo "session required pam_limits.so" >> /etc/pam.d/common-session
     echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
 
+    # Create WiFi Auto Connect service
+    cp $BJORN_PATH/wifi-auto-connect.service /etc/systemd/system/
+    
     # Enable and start services
     systemctl daemon-reload
     systemctl enable bjorn.service
+    # Note: wifi-auto-connect.service is not enabled by default - it can be enabled via web interface
 
     check_success "Services setup completed"
 }

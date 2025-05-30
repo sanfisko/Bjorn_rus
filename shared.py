@@ -290,6 +290,11 @@ class SharedData:
         self.bjornorch_status = "IDLE"
         self.bjornstatustext = "IDLE"
         self.bjornstatustext2 = "Awakening..."
+        # Set default width and height if EPD is not initialized
+        if not hasattr(self, 'width'):
+            self.width = 122  # Default width from config
+        if not hasattr(self, 'height'):
+            self.height = 250  # Default height from config
         self.scale_factor_x = self.width / self.ref_width
         self.scale_factor_y = self.height / self.ref_height
         self.text_frame_top = int(88 * self.scale_factor_x)
