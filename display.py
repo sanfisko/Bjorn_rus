@@ -76,8 +76,8 @@ class Display:
         self.scale_factor_y = self.shared_data.scale_factor_y
         
         # WiFi and IP display variables
-        self.wifi_info_display_time = 0
-        self.show_wifi_info = False
+        self.wifi_info_display_time = time.time()
+        self.show_wifi_info = True  # Start with WiFi info
         self.wifi_info_toggle_interval = 5  # seconds
 
     def get_frise_position(self):
