@@ -164,6 +164,10 @@ class SharedData:
             "timewait_ftp": 0,
             "timewait_sql": 0,
             "timewait_rdp": 0,
+            
+            "__title_wifi__": "WiFi Settings",
+            "wifi_auto_connect": False,
+            "wifi_script_running": False,
         }
 
     def update_mac_blacklist(self):
