@@ -112,8 +112,7 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.web_utils.download_file(self)
         elif self.path.startswith('/download_backup'):
             self.web_utils.download_backup(self)
-        elif self.path == '/get_wifi_auto_connect_status':
-            self.web_utils.get_wifi_auto_connect_status(self)
+
         else:
             super().do_GET()
 
@@ -148,14 +147,7 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.web_utils.start_orchestrator(self)
         elif self.path == '/execute_manual_attack':  # New route to execute a manual attack
             self.web_utils.execute_manual_attack(self)
-        elif self.path == '/start_wifi_auto_connect':
-            self.web_utils.start_wifi_auto_connect(self)
-        elif self.path == '/stop_wifi_auto_connect':
-            self.web_utils.stop_wifi_auto_connect(self)
-        elif self.path == '/enable_wifi_auto_connect':
-            self.web_utils.enable_wifi_auto_connect(self)
-        elif self.path == '/disable_wifi_auto_connect':
-            self.web_utils.disable_wifi_auto_connect(self)
+
         else:
             self.send_response(404)
             self.end_headers()
