@@ -413,6 +413,203 @@ input:checked + .slider:before {
     color: white;
 }
 
+/* WiFi form styling */
+.wifi-add-section, .wifi-known-section, .wifi-available-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #444;
+    border-radius: 5px;
+}
+
+.wifi-add-section h4, .wifi-known-section h4, .wifi-available-section h4 {
+    margin: 0 0 10px 0;
+    color: #e99f00;
+    font-size: 14px;
+}
+
+.wifi-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wifi-form input {
+    padding: 8px;
+    border: 1px solid #666;
+    border-radius: 3px;
+    background: #555;
+    color: white;
+    font-size: 14px;
+}
+
+.wifi-form input::placeholder {
+    color: #aaa;
+}
+
+.wifi-form input:focus {
+    outline: none;
+    border-color: #e99f00;
+}
+
+.wifi-add-btn, .wifi-refresh-btn {
+    padding: 8px 15px;
+    background: #e99f00;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.wifi-add-btn:hover, .wifi-refresh-btn:hover {
+    background: #d18900;
+}
+
+.wifi-status {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    display: none;
+}
+
+.wifi-status.success {
+    background: #4CAF50;
+    color: white;
+    display: block;
+}
+
+.wifi-status.error {
+    background: #f44336;
+    color: white;
+    display: block;
+}
+
+#wifi-known-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#wifi-known-list li {
+    background: #555;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 3px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#wifi-known-list li .wifi-ssid {
+    font-weight: bold;
+}
+
+#wifi-known-list li .wifi-remove {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+#wifi-known-list li .wifi-remove:hover {
+    background: #d32f2f;
+}
+
+.wifi-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wifi-form input {
+    padding: 8px;
+    border: 1px solid #666;
+    border-radius: 3px;
+    background: #555;
+    color: white;
+    font-size: 12px;
+}
+
+.wifi-form input::placeholder {
+    color: #aaa;
+}
+
+.wifi-add-btn, .wifi-refresh-btn {
+    padding: 8px 15px;
+    background: #e99f00;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.wifi-add-btn:hover, .wifi-refresh-btn:hover {
+    background: #d18900;
+}
+
+.wifi-status {
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    min-height: 20px;
+}
+
+.wifi-status.success {
+    background: #4CAF50;
+    color: white;
+}
+
+.wifi-status.error {
+    background: #f44336;
+    color: white;
+}
+
+#wifi-known-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#wifi-known-list li {
+    background: #555;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 3px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wifi-remove-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.wifi-remove-btn:hover {
+    background: #d32f2f;
+}
+
 /* Config buttons styling */
 .config-buttons {
     position: -webkit-sticky;

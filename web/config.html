@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="web/css/styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <script src="web/scripts/config.js" defer></script>
+    <script src="scripts/config.js" defer></script>
 </head>
 <body>
     <div class="toolbar" id="mainToolbar">
@@ -59,10 +59,33 @@
     
     <div id="wifi-panel" class="wifi-panel">
         <div class="wifi-panel-header">
-            <h3>Доступно Wi-Fi Сетьs</h3>
+            <h3>Wi-Fi Управление</h3>
             <button class="close-btn" onclick="closeWifiPanel()">✖</button>
         </div>
-        <ul id="wifi-list"></ul>
+        
+        <!-- WiFi Network Addition Form -->
+        <div class="wifi-add-section">
+            <h4>Добавить известную сеть</h4>
+            <div class="wifi-form">
+                <input type="text" id="wifi-ssid-input" placeholder="SSID (название сети)" maxlength="32">
+                <input type="password" id="wifi-password-input" placeholder="Пароль" maxlength="63">
+                <button onclick="addWifiNetwork()" class="wifi-add-btn">Добавить сеть</button>
+            </div>
+            <div id="wifi-add-status" class="wifi-status"></div>
+        </div>
+        
+        <!-- Known Networks List -->
+        <div class="wifi-known-section">
+            <h4>Известные сети</h4>
+            <ul id="wifi-known-list"></ul>
+            <button onclick="loadKnownNetworks()" class="wifi-refresh-btn">Обновить список</button>
+        </div>
+        
+        <!-- Available Networks List -->
+        <div class="wifi-available-section">
+            <h4>Доступные сети</h4>
+            <ul id="wifi-list"></ul>
+        </div>
     </div>
 </body>
 </html>
