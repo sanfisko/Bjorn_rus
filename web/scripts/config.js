@@ -128,18 +128,7 @@ function generateConfigForm(config) {
         });
     }
     
-    function toggleWifiPanel() {
-        let wifiPanel = document.getElementById('wifi-panel');
-        if (wifiPanel.style.display === 'block') {
-            clearInterval(wifiIntervalId);
-            wifiPanel.style.display = 'none';
-        } else {
-            scanWifi(true); // Pass true to start the update interval
-        }
-    }
-    
     function closeWifiPanel() {
-        clearInterval(wifiIntervalId);
         let wifiPanel = document.getElementById('wifi-panel');
         wifiPanel.style.display = 'none';
     }
@@ -215,6 +204,12 @@ function generateConfigForm(config) {
     
     document.addEventListener("DOMContentLoaded", function() {
         loadConfig();
+        
+        // Ensure WiFi panel is hidden on page load
+        const wifiPanel = document.getElementById('wifi-panel');
+        if (wifiPanel) {
+            wifiPanel.style.display = 'none';
+        }
         
         // Add event listener for wifi_script_running toggle
         document.addEventListener('change', function(event) {
