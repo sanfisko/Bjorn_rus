@@ -284,6 +284,8 @@ class SharedData:
         self.wifi_connected = False
         self.pan_connected = False
         self.usb_active = False
+        self.wifi_ssid = "Не подключено"
+        self.ip_address = "Не найден"
         self.bjornsays = "Hacking away..."
         self.bjornorch_status = "IDLE"
         self.bjornstatustext = "IDLE"
