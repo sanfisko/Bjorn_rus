@@ -299,3 +299,126 @@ function toggleConfigToolbar() {
 
     }
 }
+
+// WiFi Auto Connect functions
+function handleWifiAutoConnectToggle(checkbox) {
+    if (checkbox.checked) {
+        enableWifiAutoConnect();
+    } else {
+        disableWifiAutoConnect();
+    }
+}
+
+function startWifiAutoConnect() {
+    fetch('/start_wifi_auto_connect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        updateWifiAutoConnectStatus();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ошибка при запуске WiFi автоподключения');
+    });
+}
+
+function stopWifiAutoConnect() {
+    fetch('/stop_wifi_auto_connect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        updateWifiAutoConnectStatus();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ошибка при остановке WiFi автоподключения');
+    });
+}
+
+function enableWifiAutoConnect() {
+    fetch('/enable_wifi_auto_connect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        updateWifiAutoConnectStatus();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ошибка при включении автозапуска WiFi автоподключения');
+    });
+}
+
+function disableWifiAutoConnect() {
+    fetch('/disable_wifi_auto_connect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        updateWifiAutoConnectStatus();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ошибка при отключении автозапуска WiFi автоподключения');
+    });
+}
+
+function updateWifiAutoConnectStatus() {
+    fetch('/get_wifi_auto_connect_status')
+    .then(response => response.json())
+    .then(data => {
+        const statusElement = document.getElementById('wifi-auto-connect-status');
+        const controlsElement = document.getElementById('wifi-auto-connect-controls');
+        
+        if (statusElement) {
+            let statusText = `Статус: ${data.active ? 'Запущен' : 'Остановлен'} | `;
+            statusText += `Автозапуск: ${data.enabled ? 'Включен' : 'Отключен'}`;
+            statusElement.textContent = statusText;
+        }
+        
+        if (controlsElement) {
+            controlsElement.innerHTML = `
+                <button onclick="startWifiAutoConnect()" ${data.active ? 'disabled' : ''}>Запустить</button>
+                <button onclick="stopWifiAutoConnect()" ${!data.active ? 'disabled' : ''}>Остановить</button>
+                <button onclick="enableWifiAutoConnect()" ${data.enabled ? 'disabled' : ''}>Включить автозапуск</button>
+                <button onclick="disableWifiAutoConnect()" ${!data.enabled ? 'disabled' : ''}>Отключить автозапуск</button>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Initialize WiFi auto connect status when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener for wifi_auto_connect checkbox
+    const wifiAutoConnectCheckbox = document.getElementById('wifi_auto_connect');
+    if (wifiAutoConnectCheckbox) {
+        wifiAutoConnectCheckbox.addEventListener('change', function() {
+            handleWifiAutoConnectToggle(this);
+        });
+    }
+    
+    // Update status periodically
+    updateWifiAutoConnectStatus();
+    setInterval(updateWifiAutoConnectStatus, 10000); // Update every 10 seconds
+});

@@ -9,6 +9,7 @@
     "retry_failed_actions": true,
     "blacklistcheck": true,
     "displaying_csv": true,
+    "wifi_auto_connect": false,
     "log_debug": true,
     "log_info": true,
     "log_warning": true,

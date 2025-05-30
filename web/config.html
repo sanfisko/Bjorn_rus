@@ -1,1 +1,82 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bjorn Киберваряг - Конфигурация</title><link rel="icon" href="web/images/favicon.ico" type="image/x-icon"><link rel="stylesheet" href="web/css/styles.css"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="images/apple-touch-icon.png"><script src="web/scripts/config.js" defer></script></head><body><div class="toolbar" id="mainToolbar"><button type="button" onclick="window.location.href='/index.html'" title="Площадка"><img src="/web/images/console_icon.png" alt="Bjorn" style="height: 50px;"></button><button type="button" onclick="window.location.href='/config.html'" title="Конфигурация"><img src="/web/images/config_icon.png" alt="Icon_config" style="height: 50px;"></button><button type="button" onclick="window.location.href='/network.html'" title="Сеть"><img src="/web/images/network_icon.png" alt="Icon_network" style="height: 50px;"></button><button type="button" onclick="window.location.href='/netkb.html'" title="База знаний сети"><img src="/web/images/netkb_icon.png" alt="Icon_netkb" style="height: 50px;"></button><button type="button" onclick="window.location.href='/credentials.html'" title="Учётные данные"><img src="/web/images/cred_icon.png" alt="Icon_cred" style="height: 50px;"></button><button type="button" onclick="window.location.href='/loot.html'" title="Добыча"><img src="/web/images/loot_icon.png" alt="Icon_loot" style="height: 50px;"></button></div><div class="console-toolbar"><button type="button" class="toolbar-button" onclick="adjustConfigFontSize(-1)" title="-"><img src="/web/images/less.png" alt="Icon_less" style="height: 50px;"></button><button type="button" class="toolbar-button" onclick="saveConfig()" title="Сохранить"><img src="/web/images/save.png" alt="Icon_plus" style="height: 50px;"></button><button type="button" class="toolbar-button" onclick="restoreDefault()" title="Restore Default"><img src="/web/images/restore.png" alt="Icon_plus" style="height: 50px;"></button><button id="toggle-toolbar" type="button" class="toolbar-button" onclick="toggleConfigToolbar()" data-open="false"><img id="toggle-icon" src="/web/images/hide.png" alt="Toggle Панель инструментов" style="height: 50px;"></button><button type="button" class="toolbar-button" onclick="toggleWifiPanel()"><img src="/web/images/wifi.png" alt="wifi" style="height: 50px;"></button><button type="button" class="toolbar-button" onclick="adjustConfigFontSize(1)" title="+"><img src="/web/images/plus.png" alt="Icon_plus" style="height: 50px;"></button></div><div class="config-container"><form class="config-form"></form></div><div id="wifi-panel" class="wifi-panel"><div class="wifi-panel-header"><h3>Доступно Wi-Fi Сетьs</h3><button class="close-btn" onclick="closeWifiPanel()">✖</button></div><ul id="wifi-list"></ul></div></body></html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bjorn Киберваряг - Конфигурация</title>
+    <link rel="icon" href="web/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="web/css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <script src="web/scripts/config.js" defer></script>
+</head>
+<body>
+    <div class="toolbar" id="mainToolbar">
+        <button type="button" onclick="window.location.href='/index.html'" title="Площадка">
+            <img src="/web/images/console_icon.png" alt="Bjorn" style="height: 50px;">
+        </button>
+        <button type="button" onclick="window.location.href='/config.html'" title="Конфигурация">
+            <img src="/web/images/config_icon.png" alt="Icon_config" style="height: 50px;">
+        </button>
+        <button type="button" onclick="window.location.href='/network.html'" title="Сеть">
+            <img src="/web/images/network_icon.png" alt="Icon_network" style="height: 50px;">
+        </button>
+        <button type="button" onclick="window.location.href='/netkb.html'" title="База знаний сети">
+            <img src="/web/images/netkb_icon.png" alt="Icon_netkb" style="height: 50px;">
+        </button>
+        <button type="button" onclick="window.location.href='/credentials.html'" title="Учётные данные">
+            <img src="/web/images/cred_icon.png" alt="Icon_cred" style="height: 50px;">
+        </button>
+        <button type="button" onclick="window.location.href='/loot.html'" title="Добыча">
+            <img src="/web/images/loot_icon.png" alt="Icon_loot" style="height: 50px;">
+        </button>
+    </div>
+    
+    <div class="console-toolbar">
+        <button type="button" class="toolbar-button" onclick="adjustConfigFontSize(-1)" title="-">
+            <img src="/web/images/less.png" alt="Icon_less" style="height: 50px;">
+        </button>
+        <button type="button" class="toolbar-button" onclick="saveConfig()" title="Сохранить">
+            <img src="/web/images/save.png" alt="Icon_plus" style="height: 50px;">
+        </button>
+        <button type="button" class="toolbar-button" onclick="restoreDefault()" title="Restore Default">
+            <img src="/web/images/restore.png" alt="Icon_plus" style="height: 50px;">
+        </button>
+        <button id="toggle-toolbar" type="button" class="toolbar-button" onclick="toggleConfigToolbar()" data-open="false">
+            <img id="toggle-icon" src="/web/images/hide.png" alt="Toggle Панель инструментов" style="height: 50px;">
+        </button>
+        <button type="button" class="toolbar-button" onclick="toggleWifiPanel()">
+            <img src="/web/images/wifi.png" alt="wifi" style="height: 50px;">
+        </button>
+        <button type="button" class="toolbar-button" onclick="adjustConfigFontSize(1)" title="+">
+            <img src="/web/images/plus.png" alt="Icon_plus" style="height: 50px;">
+        </button>
+    </div>
+    
+    <div class="config-container">
+        <form class="config-form"></form>
+        
+        <!-- WiFi Auto Connect Control Panel -->
+        <div class="wifi-auto-connect-panel" style="margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+            <h3>WiFi Автоподключение</h3>
+            <div id="wifi-auto-connect-status" style="margin-bottom: 10px; font-weight: bold;">
+                Загрузка статуса...
+            </div>
+            <div id="wifi-auto-connect-controls" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <!-- Buttons will be populated by JavaScript -->
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                <p><strong>Описание:</strong> WiFi автоподключение автоматически подключается к известным сетям или открытым сетям при их обнаружении. Учетные данные можно загружать с USB-накопителя в формате SSID:Password.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="wifi-panel" class="wifi-panel">
+        <div class="wifi-panel-header">
+            <h3>Доступно Wi-Fi Сетьs</h3>
+            <button class="close-btn" onclick="closeWifiPanel()">✖</button>
+        </div>
+        <ul id="wifi-list"></ul>
+    </div>
+</body>
+</html>
