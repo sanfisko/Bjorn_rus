@@ -74,6 +74,11 @@ class Display:
 
         self.scale_factor_x = self.shared_data.scale_factor_x
         self.scale_factor_y = self.shared_data.scale_factor_y
+        
+        # WiFi and IP display variables
+        self.wifi_info_display_time = 0
+        self.show_wifi_info = False
+        self.wifi_info_toggle_interval = 5  # seconds
 
     def get_frise_position(self):
         """Get the frise position based on the display type."""
@@ -201,6 +206,8 @@ class Display:
                     self.manual_mode_txt = "A"
                 self.shared_data.wifi_connected = self.is_wifi_connected()
                 self.shared_data.usb_active = self.is_usb_connected()
+                self.shared_data.wifi_ssid = self.get_wifi_ssid()
+                self.shared_data.ip_address = self.get_ip_address()
                 self.get_open_files()
 
             except (FileNotFoundError, pd.errors.EmptyDataError) as e:
@@ -245,6 +252,104 @@ class Display:
             logger.error(f"Error checking WiFi status: {e}")
             return False
 
+    def get_wifi_ssid(self):
+        """Get the current WiFi SSID."""
+        try:
+            # Try iwgetid first (most common on Linux)
+            result = subprocess.Popen(['iwgetid', '-r'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            ssid, error = result.communicate()
+            if result.returncode == 0 and ssid.strip():
+                return ssid.strip()
+            
+            # Fallback: try nmcli (NetworkManager)
+            try:
+                result = subprocess.Popen(['nmcli', '-t', '-f', 'active,ssid', 'dev', 'wifi'], 
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                output, error = result.communicate()
+                if result.returncode == 0:
+                    for line in output.split('\n'):
+                        if line.startswith('yes:'):
+                            ssid = line.split(':', 1)[1]
+                            if ssid:
+                                return ssid
+            except:
+                pass
+            
+            # Fallback: try iw command
+            try:
+                result = subprocess.Popen(['iw', 'dev'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                output, error = result.communicate()
+                if result.returncode == 0:
+                    import re
+                    ssid_match = re.search(r'ssid (.+)', output)
+                    if ssid_match:
+                        return ssid_match.group(1)
+            except:
+                pass
+            
+            return "Не подключено"
+        except Exception as e:
+            logger.error(f"Error getting WiFi SSID: {e}")
+            return "Ошибка"
+
+    def get_ip_address(self):
+        """Get the current IP address of the device."""
+        try:
+            # Try to get IP using ip command
+            try:
+                result = subprocess.Popen(['ip', 'route', 'get', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                output, error = result.communicate()
+                if result.returncode == 0:
+                    # Parse the output to get the source IP
+                    for line in output.split('\n'):
+                        if 'src' in line:
+                            parts = line.split()
+                            for i, part in enumerate(parts):
+                                if part == 'src' and i + 1 < len(parts):
+                                    return parts[i + 1]
+            except:
+                pass
+            
+            # Fallback: try to get IP from wlan0 interface directly
+            try:
+                result = subprocess.Popen(['ip', 'addr', 'show', 'wlan0'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                output, error = result.communicate()
+                if result.returncode == 0:
+                    import re
+                    ip_match = re.search(r'inet (\d+\.\d+\.\d+\.\d+)', output)
+                    if ip_match:
+                        return ip_match.group(1)
+            except:
+                pass
+            
+            # Fallback: try ifconfig
+            try:
+                result = subprocess.Popen(['ifconfig', 'wlan0'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                output, error = result.communicate()
+                if result.returncode == 0:
+                    import re
+                    ip_match = re.search(r'inet (\d+\.\d+\.\d+\.\d+)', output)
+                    if ip_match:
+                        return ip_match.group(1)
+            except:
+                pass
+            
+            # Last resort: try to get any IP address
+            try:
+                import socket
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.connect(("8.8.8.8", 80))
+                ip = s.getsockname()[0]
+                s.close()
+                return ip
+            except:
+                pass
+            
+            return "Не найден"
+        except Exception as e:
+            logger.error(f"Error getting IP address: {e}")
+            return "Ошибка"
+
     def is_manual_mode(self):
         """Check if the BjornOrch is in manual mode."""
         return self.shared_data.manual_mode
@@ -285,7 +390,20 @@ class Display:
                 image = Image.new('1', (self.shared_data.width, self.shared_data.height))
                 draw = ImageDraw.Draw(image)
                 draw.rectangle((0, 0, self.shared_data.width, self.shared_data.height), fill=255)
-                draw.text((int(37 * self.scale_factor_x), int(5 * self.scale_factor_y)), "BJORN", font=self.shared_data.font_viking, fill=0)
+                # WiFi and IP information display with alternating every 5 seconds (replacing BJORN text)
+                current_time = time.time()
+                if current_time - self.wifi_info_display_time >= self.wifi_info_toggle_interval:
+                    self.show_wifi_info = not self.show_wifi_info
+                    self.wifi_info_display_time = current_time
+                
+                if self.show_wifi_info:
+                    # Show WiFi SSID
+                    header_text = f"WiFi: {self.shared_data.wifi_ssid}"
+                else:
+                    # Show IP address
+                    header_text = f"IP: {self.shared_data.ip_address}"
+                
+                draw.text((int(37 * self.scale_factor_x), int(5 * self.scale_factor_y)), header_text, font=self.shared_data.font_viking, fill=0)
                 draw.text((int(110 * self.scale_factor_x), int(170 * self.scale_factor_y)), self.manual_mode_txt, font=self.shared_data.font_arial14, fill=0)
                 
                 if self.shared_data.wifi_connected:
