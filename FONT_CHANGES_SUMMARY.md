@@ -10,8 +10,8 @@
 **Файл:** `display.py`, строка 406
 **Переменная:** `self.shared_data.font_viking`
 
-- **БЫЛО:** `vikingtygra.ttf` размер 13
-- **СТАЛО:** `ArialB.TTF` размер 12
+- **БЫЛО:** `vikingtygra.ttf` размер 13, позиция X: 37
+- **СТАЛО:** `ArialB.TTF` размер 11, позиция X: 30
 
 ### 2. Диалоги из comments.json (по середине)
 
@@ -34,7 +34,18 @@ self.font_viking = self.load_font('vikingtygra.ttf', 13)
 
 # Стало:
 self.font_arialbold = self.load_font('vikingtygra.ttf', 12)
-self.font_viking = self.load_font('ArialB.TTF', 12)
+self.font_viking = self.load_font('ArialB.TTF', 11)
+```
+
+### display.py
+Позиция отображения WiFi/IP (строка 406):
+
+```python
+# Было:
+draw.text((int(37 * self.scale_factor_x), int(5 * self.scale_factor_y)), header_text, font=self.shared_data.font_viking, fill=0)
+
+# Стало:
+draw.text((int(30 * self.scale_factor_x), int(5 * self.scale_factor_y)), header_text, font=self.shared_data.font_viking, fill=0)
 ```
 
 ## Проверка изменений
@@ -43,6 +54,12 @@ self.font_viking = self.load_font('ArialB.TTF', 12)
 
 ```bash
 python test_fonts_simple.py
+```
+
+Для проверки позиции и размера IP адреса:
+
+```bash
+python test_ip_position_changes.py
 ```
 
 Для демонстрации визуальных изменений:
@@ -62,6 +79,8 @@ python demo_font_changes.py
 
 ## Примечания
 
-- Размер шрифта для WiFi/IP изменен с 13 на 12 для соответствия размеру ArialB, используемому в других местах
+- Размер шрифта для WiFi/IP изменен с 13 на 11 для экономии места при длинных IP адресах
+- Позиция WiFi/IP сдвинута влево с 37 на 30 пикселей для лучшего размещения
 - Все изменения обратно совместимы и не влияют на другие части системы
 - Шрифты загружаются при инициализации `SharedData` класса
+- Изменения оптимизированы для отображения длинных IP адресов типа 255.255.255.255
