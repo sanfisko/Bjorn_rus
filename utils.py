@@ -872,3 +872,199 @@ method=auto
             handler.send_header("Content-type", "application/json")
             handler.end_headers()
             handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
+
+    def get_known_wifi_networks(self, handler):
+        """Get list of known WiFi networks from wifi_net.txt file."""
+        try:
+            import os
+            import pwd
+            
+            # Determine home directory
+            if os.environ.get('SUDO_USER'):
+                home_dir = pwd.getpwnam(os.environ['SUDO_USER']).pw_dir
+            else:
+                home_dir = os.path.expanduser('~')
+            
+            wifi_file = os.path.join(home_dir, 'wifi_net.txt')
+            networks = []
+            
+            if os.path.exists(wifi_file):
+                with open(wifi_file, 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and ':' in line:
+                            ssid = line.split(':', 1)[0]
+                            if ssid:
+                                networks.append({"ssid": ssid})
+            
+            handler.send_response(200)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            response = {"networks": networks}
+            handler.wfile.write(json.dumps(response).encode('utf-8'))
+
+        except Exception as e:
+            handler.send_response(500)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
+
+    def add_wifi_network(self, handler):
+        """Add a new WiFi network to the known networks file."""
+        try:
+            import json
+            import os
+            import pwd
+            
+            # Read request data
+            content_length = int(handler.headers['Content-Length'])
+            post_data = handler.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            ssid = data.get('ssid', '').strip()
+            password = data.get('password', '').strip()
+            
+            if not ssid or not password:
+                handler.send_response(400)
+                handler.send_header("Content-type", "application/json")
+                handler.end_headers()
+                handler.wfile.write(json.dumps({"success": False, "message": "SSID и пароль обязательны"}).encode('utf-8'))
+                return
+            
+            # Validate SSID and password
+            if len(ssid) > 32:
+                handler.send_response(400)
+                handler.send_header("Content-type", "application/json")
+                handler.end_headers()
+                handler.wfile.write(json.dumps({"success": False, "message": "SSID слишком длинный (максимум 32 символа)"}).encode('utf-8'))
+                return
+            
+            if len(password) > 63:
+                handler.send_response(400)
+                handler.send_header("Content-type", "application/json")
+                handler.end_headers()
+                handler.wfile.write(json.dumps({"success": False, "message": "Пароль слишком длинный (максимум 63 символа)"}).encode('utf-8'))
+                return
+            
+            # Determine home directory
+            if os.environ.get('SUDO_USER'):
+                home_dir = pwd.getpwnam(os.environ['SUDO_USER']).pw_dir
+            else:
+                home_dir = os.path.expanduser('~')
+            
+            wifi_file = os.path.join(home_dir, 'wifi_net.txt')
+            
+            # Check if network already exists
+            existing_networks = []
+            if os.path.exists(wifi_file):
+                with open(wifi_file, 'r') as f:
+                    existing_networks = f.readlines()
+            
+            # Check for duplicate SSID
+            for line in existing_networks:
+                if line.strip() and ':' in line:
+                    existing_ssid = line.split(':', 1)[0]
+                    if existing_ssid == ssid:
+                        handler.send_response(400)
+                        handler.send_header("Content-type", "application/json")
+                        handler.end_headers()
+                        handler.wfile.write(json.dumps({"success": False, "message": f"Сеть '{ssid}' уже существует"}).encode('utf-8'))
+                        return
+            
+            # Add new network
+            network_entry = f"{ssid}:{password}\n"
+            with open(wifi_file, 'a') as f:
+                f.write(network_entry)
+            
+            # Set proper permissions
+            os.chmod(wifi_file, 0o600)
+            
+            handler.send_response(200)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            handler.wfile.write(json.dumps({"success": True, "message": f"Сеть '{ssid}' добавлена"}).encode('utf-8'))
+
+        except Exception as e:
+            handler.send_response(500)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            handler.wfile.write(json.dumps({"success": False, "message": f"Ошибка: {str(e)}"}).encode('utf-8'))
+
+    def remove_wifi_network(self, handler):
+        """Remove a WiFi network from the known networks file."""
+        try:
+            import json
+            import os
+            import pwd
+            
+            # Read request data
+            content_length = int(handler.headers['Content-Length'])
+            post_data = handler.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            ssid = data.get('ssid', '').strip()
+            
+            if not ssid:
+                handler.send_response(400)
+                handler.send_header("Content-type", "application/json")
+                handler.end_headers()
+                handler.wfile.write(json.dumps({"success": False, "message": "SSID обязателен"}).encode('utf-8'))
+                return
+            
+            # Determine home directory
+            if os.environ.get('SUDO_USER'):
+                home_dir = pwd.getpwnam(os.environ['SUDO_USER']).pw_dir
+            else:
+                home_dir = os.path.expanduser('~')
+            
+            wifi_file = os.path.join(home_dir, 'wifi_net.txt')
+            
+            if not os.path.exists(wifi_file):
+                handler.send_response(404)
+                handler.send_header("Content-type", "application/json")
+                handler.end_headers()
+                handler.wfile.write(json.dumps({"success": False, "message": "Файл с сетями не найден"}).encode('utf-8'))
+                return
+            
+            # Read existing networks
+            with open(wifi_file, 'r') as f:
+                lines = f.readlines()
+            
+            # Filter out the network to remove
+            new_lines = []
+            found = False
+            for line in lines:
+                if line.strip() and ':' in line:
+                    existing_ssid = line.split(':', 1)[0]
+                    if existing_ssid != ssid:
+                        new_lines.append(line)
+                    else:
+                        found = True
+                else:
+                    new_lines.append(line)
+            
+            if not found:
+                handler.send_response(404)
+                handler.send_header("Content-type", "application/json")
+                handler.end_headers()
+                handler.wfile.write(json.dumps({"success": False, "message": f"Сеть '{ssid}' не найдена"}).encode('utf-8'))
+                return
+            
+            # Write updated file
+            with open(wifi_file, 'w') as f:
+                f.writelines(new_lines)
+            
+            # Set proper permissions
+            os.chmod(wifi_file, 0o600)
+            
+            handler.send_response(200)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            handler.wfile.write(json.dumps({"success": True, "message": f"Сеть '{ssid}' удалена"}).encode('utf-8'))
+
+        except Exception as e:
+            handler.send_response(500)
+            handler.send_header("Content-type", "application/json")
+            handler.end_headers()
+            handler.wfile.write(json.dumps({"success": False, "message": f"Ошибка: {str(e)}"}).encode('utf-8'))
+

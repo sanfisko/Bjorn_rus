@@ -323,3 +323,142 @@ function updateWifiScriptStatus() {
         });
 }
 
+// WiFi network management functions
+function addWifiNetwork() {
+    const ssidInput = document.getElementById('wifi-ssid-input');
+    const passwordInput = document.getElementById('wifi-password-input');
+    const statusDiv = document.getElementById('wifi-add-status');
+    
+    const ssid = ssidInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    // Clear previous status
+    statusDiv.className = 'wifi-status';
+    statusDiv.textContent = '';
+    
+    // Validate input
+    if (!ssid) {
+        showWifiStatus('Введите SSID сети', 'error');
+        return;
+    }
+    
+    if (!password) {
+        showWifiStatus('Введите пароль сети', 'error');
+        return;
+    }
+    
+    // Send request to add network
+    fetch('/add_wifi_network', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ssid: ssid,
+            password: password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showWifiStatus(`Сеть "${ssid}" успешно добавлена`, 'success');
+            ssidInput.value = '';
+            passwordInput.value = '';
+            // Refresh known networks list
+            setTimeout(() => {
+                loadKnownNetworks();
+            }, 500);
+        } else {
+            showWifiStatus(data.message || 'Ошибка при добавлении сети', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding WiFi network:', error);
+        showWifiStatus('Ошибка соединения с сервером', 'error');
+    });
+}
+
+function showWifiStatus(message, type) {
+    const statusDiv = document.getElementById('wifi-add-status');
+    statusDiv.textContent = message;
+    statusDiv.className = `wifi-status ${type}`;
+    
+    // Clear status after 5 seconds
+    setTimeout(() => {
+        statusDiv.textContent = '';
+        statusDiv.className = 'wifi-status';
+    }, 5000);
+}
+
+function loadKnownNetworks() {
+    fetch('/get_known_wifi_networks')
+        .then(response => response.json())
+        .then(data => {
+            const knownList = document.getElementById('wifi-known-list');
+            knownList.innerHTML = '';
+            
+            if (data.networks && data.networks.length > 0) {
+                data.networks.forEach(network => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${network.ssid}</span>
+                        <button class="wifi-remove-btn" onclick="removeWifiNetwork('${network.ssid}')">Удалить</button>
+                    `;
+                    knownList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = 'Нет сохраненных сетей';
+                li.style.fontStyle = 'italic';
+                li.style.color = '#aaa';
+                knownList.appendChild(li);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading known networks:', error);
+            const knownList = document.getElementById('wifi-known-list');
+            knownList.innerHTML = '<li style="color: #f44336;">Ошибка загрузки сетей</li>';
+        });
+}
+
+function removeWifiNetwork(ssid) {
+    if (!confirm(`Удалить сеть "${ssid}" из списка известных?`)) {
+        return;
+    }
+    
+    fetch('/remove_wifi_network', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ssid: ssid
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showWifiStatus(`Сеть "${ssid}" удалена`, 'success');
+            loadKnownNetworks();
+        } else {
+            showWifiStatus(data.message || 'Ошибка при удалении сети', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error removing WiFi network:', error);
+        showWifiStatus('Ошибка соединения с сервером', 'error');
+    });
+}
+
+// Load known networks when WiFi panel is opened
+function toggleWifiPanel() {
+    const panel = document.getElementById('wifi-panel');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        loadKnownNetworks();
+        loadWifiNetworks();
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
