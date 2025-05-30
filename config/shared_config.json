@@ -9,7 +9,6 @@
     "retry_failed_actions": true,
     "blacklistcheck": true,
     "displaying_csv": true,
-    "wifi_auto_connect": false,
     "log_debug": true,
     "log_info": true,
     "log_warning": true,
@@ -75,7 +74,8 @@
     ],
     "mac_scan_blacklist": [
         "00:11:32:c4:71:9b",
-        "00:11:32:c4:71:9a"
+        "00:11:32:c4:71:9a",
+        "6e:78:50:44:34:18"
     ],
     "ip_scan_blacklist": [
         "192.168.1.1",
@@ -104,5 +104,6 @@
     "timewait_telnet": 0,
     "timewait_ftp": 0,
     "timewait_sql": 0,
-    "timewait_rdp": 0
+    "timewait_rdp": 0,
+    "wifi_auto_connect": false
 }
