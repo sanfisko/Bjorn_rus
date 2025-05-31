@@ -52,11 +52,11 @@ function toggleLootToolbar() {
     const toggleIcon = document.getElementById('toggle-icon');
     if (mainToolbar.classList.contains('hidden')) {
         mainToolbar.classList.remove('hidden');
-        toggleIcon.src = '/images/hide.png';
+        toggleIcon.src = '/web/images/hide.png';
         toggleButton.setAttribute('data-open', 'false');
     } else {
         mainToolbar.classList.add('hidden');
-        toggleIcon.src = '/images/reveal.png';
+        toggleIcon.src = '/web/images/reveal.png';
         toggleButton.setAttribute('data-open', 'true');
     }
 }
