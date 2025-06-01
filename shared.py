@@ -218,7 +218,7 @@ class SharedData:
         self.generate_actions_json()
         self.delete_webconsolelog()
         self.initialize_csv()
-        self.initialize_epd_display()
+        # self.initialize_epd_display()  # Temporarily disabled for testing
     
 
     # def initialize_epd_display(self):

@@ -214,7 +214,9 @@ function generateConfigForm(config) {
         // Add event listener for wifi_script_running toggle
         document.addEventListener('change', function(event) {
             if (event.target.id === 'wifi_script_running') {
-                // Update status immediately after toggle
+                // Immediately apply the WiFi script toggle
+                toggleWifiScript(event.target.checked);
+                // Update status after toggle
                 setTimeout(updateWifiScriptStatus, 1500);
             }
         });
@@ -445,13 +447,35 @@ function removeWifiNetwork(ssid) {
     });
 }
 
+// Toggle WiFi script immediately when checkbox is changed
+function toggleWifiScript(enabled) {
+    const config = {
+        wifi_script_running: enabled
+    };
+    
+    fetch('/save_config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('WiFi script toggle response:', data);
+    })
+    .catch(error => {
+        console.error('Error toggling WiFi script:', error);
+    });
+}
+
 // Load known networks when WiFi panel is opened
 function toggleWifiPanel() {
     const panel = document.getElementById('wifi-panel');
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'block';
         loadKnownNetworks();
-        loadWifiNetworks();
+        scanWifi();
     } else {
         panel.style.display = 'none';
     }
