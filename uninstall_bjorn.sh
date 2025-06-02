@@ -7,6 +7,37 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Default settings
+AUTO_CONFIRM=true
+TIMEOUT=5
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --interactive|-i)
+            AUTO_CONFIRM=false
+            shift
+            ;;
+        --timeout|-t)
+            TIMEOUT="$2"
+            shift 2
+            ;;
+        --help|-h)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Options:"
+            echo "  --interactive, -i    Disable auto-confirmation (interactive mode)"
+            echo "  --timeout, -t SEC    Set timeout in seconds (default: 5)"
+            echo "  --help, -h           Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 # Logging configuration
 LOG_DIR="/var/log/bjorn_remove"
 mkdir -p "$LOG_DIR"
@@ -27,14 +58,42 @@ log() {
     esac
 }
 
-# Function to ask for confirmation
+# Function to ask for confirmation with auto-timeout
 confirm() {
-    echo -e "${YELLOW}Do you want to $1? (y/n)${NC}"
-    read -r response
-    case "$response" in
-        [yY]) return 0 ;;
-        *) return 1 ;;
-    esac
+    if [ "$AUTO_CONFIRM" = false ]; then
+        # Interactive mode - wait indefinitely
+        echo -e "${YELLOW}Do you want to $1? (y/n)${NC}"
+        read -r response
+        case "$response" in
+            [yY]) return 0 ;;
+            *) return 1 ;;
+        esac
+    else
+        # Auto-confirm mode with countdown
+        echo -e "${YELLOW}Do you want to $1? (Y/n)${NC}"
+        echo -e "${BLUE}Auto-confirming in ${TIMEOUT} seconds... (press 'n' to cancel)${NC}"
+        
+        # Countdown with visual feedback
+        for ((i=TIMEOUT; i>0; i--)); do
+            echo -ne "\r${BLUE}Auto-confirming in ${i} seconds... (press 'n' to cancel)${NC}"
+            if read -t 1 -n 1 response; then
+                echo # New line after input
+                case "$response" in
+                    [nN]) 
+                        echo -e "${YELLOW}Cancelled by user${NC}"
+                        return 1 
+                        ;;
+                    *) 
+                        echo -e "${GREEN}Confirmed${NC}"
+                        return 0 
+                        ;;
+                esac
+            fi
+        done
+        
+        echo -e "\r${GREEN}Auto-confirmed after ${TIMEOUT} seconds${NC}"
+        return 0
+    fi
 }
 
 # Check if running as root
@@ -144,7 +203,17 @@ remove_bjorn_files() {
 # Main execution
 echo -e "${BLUE}BJORN Removal Script${NC}"
 echo -e "${YELLOW}This script will remove BJORN while preserving the bjorn user and system packages.${NC}"
-echo -e "${YELLOW}Each step will ask for confirmation before proceeding.${NC}"
+
+if [ "$AUTO_CONFIRM" = true ]; then
+    echo -e "${GREEN}Running in AUTO-CONFIRM mode (timeout: ${TIMEOUT}s)${NC}"
+    echo -e "${YELLOW}Each step will auto-confirm after ${TIMEOUT} seconds unless cancelled with 'n'${NC}"
+    echo -e "${BLUE}Use --interactive flag to disable auto-confirmation${NC}"
+else
+    echo -e "${GREEN}Running in INTERACTIVE mode${NC}"
+    echo -e "${YELLOW}Each step will ask for confirmation before proceeding.${NC}"
+fi
+
+echo
 
 # Step 1: Stop Services
 if confirm "stop all BJORN related services"; then
