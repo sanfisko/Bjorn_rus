@@ -83,10 +83,14 @@ Bjorn - это мощный инструмент, предназначенный
 Самый быстрый способ установить Bjorn - использовать скрипт автоматической установки:
 
 ```bash
-# Скачайте и запустите установщик
-wget https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh
-sudo chmod +x install_bjorn.sh && sudo ./install_bjorn.sh
-# Выберите вариант 1 для автоматической установки. Это может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
+# Автоматическая установка (рекомендуется)
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash
+
+# Или с указанием версии дисплея (для неинтерактивной установки)
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash -s -- --epd-version 4
+
+# Версии дисплеев: 1=epd2in13, 2=epd2in13_V2, 3=epd2in13_V3, 4=epd2in13_V4 (по умолчанию), 5=epd2in7
+# Установка может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
 ```
 
 Для **подробной информации** о процессе **установки** перейдите к [Руководству по установке](INSTALL.md)
