@@ -211,8 +211,8 @@ sudo systemctl stop bjorn.service
 cp -r /path/to/bjorn_rus/data /path/to/backup/
 
 # Переустановите Bjorn
-sudo ./uninstall_bjorn.sh
-sudo ./install_bjorn.sh
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh
+sudo chmod +x ./Bjorn_rus/install_bjorn.sh && sudo ./Bjorn_rus/install_bjorn.sh
 
 # Восстановите данные (если нужно)
 cp -r /path/to/backup/data /path/to/bjorn_rus/

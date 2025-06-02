@@ -186,16 +186,16 @@ sudo systemctl restart bjorn
 ```bash
 # Автоматическое удаление (рекомендуется)
 # Все запросы автоматически подтверждаются через 5 секунд
-sudo ./uninstall_bjorn.sh
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh
 
 # Интерактивный режим (ручное подтверждение каждого шага)
-sudo ./uninstall_bjorn.sh --interactive
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh --interactive
 
 # Изменить таймаут автоподтверждения (например, 10 секунд)
-sudo ./uninstall_bjorn.sh --timeout 10
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh --timeout 10
 
 # Показать справку по параметрам
-./uninstall_bjorn.sh --help
+chmod +x ./Bjorn_rus/uninstall_bjorn.sh && ./Bjorn_rus/uninstall_bjorn.sh --help
 ```
 
 **Возможности скрипта удаления:**
