@@ -62,14 +62,26 @@ handle_error() {
     echo -e "\n${RED}Would you like to:"
     echo "1. Retry this step"
     echo "2. Skip this step (not recommended)"
-    echo "3. Exit installation${NC}"
-    read -r choice
+    echo "3. Exit installation (default)${NC}"
+    echo -e "${YELLOW}Auto-exiting in 30 seconds if no response is given.${NC}"
+    read -t 30 -p "Enter your choice (1-3) [auto-exit in 30s]: " choice
+    read_exit_code=$?
+    
+    # Check if read timed out (exit code > 128)
+    if [ $read_exit_code -gt 128 ]; then
+        choice=3
+        echo -e "\n${YELLOW}No response received. Auto-exiting installation for safety...${NC}"
+        log "INFO" "Auto-exit initiated after 30 second timeout during error handling."
+    fi
 
     case $choice in
         1) return 1 ;; # Retry
         2) return 0 ;; # Skip
         3) clean_exit 1 ;; # Exit
-        *) handle_error "$error_message" ;; # Invalid choice
+        *) 
+            echo -e "${RED}Invalid choice. Exiting for safety.${NC}"
+            clean_exit 1
+        ;;
     esac
 }
 
@@ -181,11 +193,24 @@ check_system_compatibility() {
     if [ "$should_ask_confirmation" = true ]; then
         echo -e "\n${YELLOW}Some system compatibility warnings were detected (see above).${NC}"
         echo -e "${YELLOW}The installation might not work as expected.${NC}"
-        echo -e "${YELLOW}Do you want to continue anyway? (y/n)${NC}"
-        read -r response
-        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}Installation will automatically continue in 15 seconds if no response is given.${NC}"
+        read -t 15 -p "Do you want to continue anyway? (y/n) [auto-continue in 15s]: " response
+        read_exit_code=$?
+        
+        # Check if read timed out (exit code > 128) or user answered 'y'
+        if [ $read_exit_code -gt 128 ] || [[ "$response" =~ ^[Yy]$ ]]; then
+            if [ $read_exit_code -gt 128 ]; then
+                echo -e "\n${YELLOW}No response received. Automatically continuing installation...${NC}"
+                log "INFO" "Auto-continue initiated after 15 second timeout."
+            else
+                log "INFO" "User confirmed to continue installation."
+            fi
+        elif [[ "$response" =~ ^[Nn]$ ]]; then
             log "INFO" "Installation aborted by user after compatibility warnings"
             clean_exit 1
+        else
+            echo -e "${YELLOW}Invalid response. Continuing installation...${NC}"
+            log "INFO" "Invalid response received, continuing installation."
         fi
     else
         log "SUCCESS" "All compatibility checks passed"
@@ -592,11 +617,21 @@ main() {
     echo "1. epd2in13"
     echo "2. epd2in13_V2"
     echo "3. epd2in13_V3"
-    echo "4. epd2in13_V4"
+    echo "4. epd2in13_V4 (default)"
     echo "5. epd2in7"
+    echo -e "${YELLOW}Auto-selecting epd2in13_V4 in 15 seconds if no response is given.${NC}"
     
     while true; do
-        read -p "Enter your choice (1-5): " epd_choice
+        read -t 15 -p "Enter your choice (1-5) [auto-select 4 in 15s]: " epd_choice
+        read_exit_code=$?
+        
+        # Check if read timed out (exit code > 128)
+        if [ $read_exit_code -gt 128 ]; then
+            epd_choice=4
+            echo -e "\n${YELLOW}No response received. Auto-selecting epd2in13_V4 (option 4)...${NC}"
+            log "INFO" "Auto-selected E-Paper Display version: epd2in13_V4 after 15 second timeout."
+        fi
+        
         case $epd_choice in
             1) EPD_VERSION="epd2in13"; break;;
             2) EPD_VERSION="epd2in13_V2"; break;;
