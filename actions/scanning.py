@@ -315,12 +315,19 @@ class NetworkScanner:
             Starts the port scanning process for the specified range and extra ports.
             """
             try:
+                threads = []
                 for port in range(self.portstart, self.portend):
                     t = threading.Thread(target=self.scan_with_semaphore, args=(port,))
                     t.start()
+                    threads.append(t)
                 for port in self.extra_ports:
                     t = threading.Thread(target=self.scan_with_semaphore, args=(port,))
                     t.start()
+                    threads.append(t)
+                
+                # Wait for all threads to complete
+                for t in threads:
+                    t.join()
             except Exception as e:
                 self.logger.info(f"Maximum threads defined in the semaphore reached: {e}")
 
@@ -369,11 +376,16 @@ class NetworkScanner:
 
             # Use nmap to scan for live hosts
             self.outer_instance.nm.scan(hosts=str(self.network), arguments='-sn')
+            threads = []
             for host in self.outer_instance.nm.all_hosts():
                 t = threading.Thread(target=self.scan_host, args=(host,))
                 t.start()
+                threads.append(t)
 
-            time.sleep(5)
+            # Wait for all threads to complete
+            for t in threads:
+                t.join()
+            
             self.outer_instance.sort_and_write_csv(self.csv_scan_file)
 
         def scan_host(self, ip):
@@ -407,7 +419,6 @@ class NetworkScanner:
             Starts the network and port scanning process.
             """
             self.scan_network_and_write_to_csv()
-            time.sleep(7)
             self.ip_data = self.outer_instance.GetIpFromCsv(self.outer_instance, self.csv_scan_file)
             self.open_ports = {ip: [] for ip in self.ip_data.ip_list}
             with Progress() as progress:

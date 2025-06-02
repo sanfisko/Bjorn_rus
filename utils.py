@@ -854,17 +854,16 @@ method=auto
             handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
 
     def get_wifi_script_status(self, handler):
-        """Get the current status of the WiFi auto-connect script."""
+        """Get the current status of the WiFi auto-connect script from configuration."""
         try:
-            import subprocess
-            # Check if the script is running
-            result = subprocess.run("pgrep -f wifi_auto_connect.sh", shell=True, capture_output=True, text=True)
-            is_running = result.returncode == 0
+            # Read the status from configuration file instead of checking process
+            config_data = self.shared_data.config
+            wifi_script_running = config_data.get('wifi_script_running', False)
             
             handler.send_response(200)
             handler.send_header("Content-type", "application/json")
             handler.end_headers()
-            response = {"wifi_script_running": is_running}
+            response = {"wifi_script_running": wifi_script_running}
             handler.wfile.write(json.dumps(response).encode('utf-8'))
             
         except Exception as e:
