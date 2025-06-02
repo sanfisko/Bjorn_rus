@@ -83,7 +83,8 @@
         "66:1d:27:a5:41:85",
         "f6:43:77:40:63:3e",
         "e6:e3:5d:4f:f8:1c",
-        "c2:f6:2a:cf:57:e8"
+        "c2:f6:2a:cf:57:e8",
+        "96:30:60:f5:cd:f6"
     ],
     "ip_scan_blacklist": [
         "192.168.1.1",
@@ -115,5 +116,5 @@
     "timewait_rdp": 0,
     "__title_wifi__": "WiFi Settings",
     "wifi_auto_connect": false,
-    "wifi_script_running": false
+    "wifi_script_running": true
 }
