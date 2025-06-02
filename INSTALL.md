@@ -58,12 +58,20 @@ curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/instal
 # Неинтерактивная установка с автоматическим выбором дисплея
 curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash -s -- --epd-version 4
 
-# Доступные версии дисплеев:
-# 1 = epd2in13
-# 2 = epd2in13_V2  
-# 3 = epd2in13_V3
-# 4 = epd2in13_V4 (по умолчанию)
-# 5 = epd2in7
+# Доступные параметры установки:
+# --epd-version 1-5    : Версия дисплея
+#   1 = epd2in13
+#   2 = epd2in13_V2  
+#   3 = epd2in13_V3
+#   4 = epd2in13_V4 (по умолчанию)
+#   5 = epd2in7
+# --auto-reboot        : Принудительная автоматическая перезагрузка
+# --no-reboot          : Пропустить перезагрузку (перезагрузить вручную)
+# --help               : Показать справку
+
+# Примеры использования:
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash -s -- --epd-version 4 --auto-reboot
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash -s -- --no-reboot
 
 # Установка может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
 ```
