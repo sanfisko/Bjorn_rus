@@ -449,7 +449,7 @@ class Display:
                 
                 # Индикатор WiFi автоподключения (справа от IDLE)
                 wifi_auto_icon = self.shared_data.get_wifi_auto_icon()
-                image.paste(wifi_auto_icon, (int(110 * self.scale_factor_x), int(65 * self.scale_factor_y)))
+                image.paste(wifi_auto_icon, (int(104 * self.scale_factor_x), int(65 * self.scale_factor_y)))
 
                 stats = [
                     (self.shared_data.target, (int(8 * self.scale_factor_x), int(22 * self.scale_factor_y)), (int(28 * self.scale_factor_x), int(22 * self.scale_factor_y)), str(self.shared_data.targetnbr)),
