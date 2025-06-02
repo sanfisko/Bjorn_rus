@@ -321,59 +321,6 @@ function updateWifiScriptStatus() {
 }
 
 // WiFi network management functions
-function addWifiNetwork() {
-    const ssidInput = document.getElementById('wifi-ssid-input');
-    const passwordInput = document.getElementById('wifi-password-input');
-    const statusDiv = document.getElementById('wifi-add-status');
-    
-    const ssid = ssidInput.value.trim();
-    const password = passwordInput.value.trim();
-    
-    // Clear previous status
-    statusDiv.className = 'wifi-status';
-    statusDiv.textContent = '';
-    
-    // Validate input
-    if (!ssid) {
-        showWifiStatus('Введите SSID сети', 'error');
-        return;
-    }
-    
-    if (!password) {
-        showWifiStatus('Введите пароль сети', 'error');
-        return;
-    }
-    
-    // Send request to add network
-    fetch('/add_wifi_network', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            ssid: ssid,
-            password: password
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showWifiStatus(`Сеть "${ssid}" успешно добавлена`, 'success');
-            ssidInput.value = '';
-            passwordInput.value = '';
-            // Refresh known networks list
-            setTimeout(() => {
-                loadKnownNetworks();
-            }, 500);
-        } else {
-            showWifiStatus(data.message || 'Ошибка при добавлении сети', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error adding WiFi network:', error);
-        showWifiStatus('Ошибка соединения с сервером', 'error');
-    });
-}
 
 function showWifiStatus(message, type) {
     const statusDiv = document.getElementById('wifi-add-status');

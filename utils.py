@@ -899,14 +899,14 @@ method=auto
             handler.send_response(200)
             handler.send_header("Content-type", "application/json")
             handler.end_headers()
-            response = {"networks": networks}
+            response = {"success": True, "networks": networks}
             handler.wfile.write(json.dumps(response).encode('utf-8'))
 
         except Exception as e:
             handler.send_response(500)
             handler.send_header("Content-type", "application/json")
             handler.end_headers()
-            handler.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
+            handler.wfile.write(json.dumps({"success": False, "error": str(e)}).encode('utf-8'))
 
     def add_wifi_network(self, handler):
         """Add a new WiFi network to the known networks file."""
@@ -920,10 +920,15 @@ method=auto
             post_data = handler.rfile.read(content_length)
             data = json.loads(post_data.decode('utf-8'))
             
+            self.logger.info(f"Received WiFi network data: {data}")
+            
             ssid = data.get('ssid', '').strip()
             password = data.get('password', '').strip()
             
+            self.logger.info(f"SSID: '{ssid}', Password length: {len(password)}")
+            
             if not ssid or not password:
+                self.logger.warning(f"Missing SSID or password: SSID='{ssid}', Password empty={not password}")
                 handler.send_response(400)
                 handler.send_header("Content-type", "application/json")
                 handler.end_headers()
@@ -932,6 +937,7 @@ method=auto
             
             # Validate SSID and password
             if len(ssid) > 32:
+                self.logger.warning(f"SSID too long: {len(ssid)} characters")
                 handler.send_response(400)
                 handler.send_header("Content-type", "application/json")
                 handler.end_headers()
@@ -939,6 +945,7 @@ method=auto
                 return
             
             if len(password) > 63:
+                self.logger.warning(f"Password too long: {len(password)} characters")
                 handler.send_response(400)
                 handler.send_header("Content-type", "application/json")
                 handler.end_headers()
@@ -951,19 +958,25 @@ method=auto
             else:
                 home_dir = os.path.expanduser('~')
             
+            self.logger.info(f"Home directory: {home_dir}")
             wifi_file = os.path.join(home_dir, 'wifi_net.txt')
+            self.logger.info(f"WiFi file path: {wifi_file}")
             
             # Check if network already exists
             existing_networks = []
             if os.path.exists(wifi_file):
                 with open(wifi_file, 'r') as f:
                     existing_networks = f.readlines()
+                self.logger.info(f"Found {len(existing_networks)} existing networks")
+            else:
+                self.logger.info("WiFi file does not exist yet")
             
             # Check for duplicate SSID
             for line in existing_networks:
                 if line.strip() and ':' in line:
                     existing_ssid = line.split(':', 1)[0]
                     if existing_ssid == ssid:
+                        self.logger.warning(f"Duplicate SSID found: {ssid}")
                         handler.send_response(400)
                         handler.send_header("Content-type", "application/json")
                         handler.end_headers()
@@ -972,11 +985,13 @@ method=auto
             
             # Add new network
             network_entry = f"{ssid}:{password}\n"
+            self.logger.info(f"Adding network entry: {ssid}:***")
             with open(wifi_file, 'a') as f:
                 f.write(network_entry)
             
             # Set proper permissions
             os.chmod(wifi_file, 0o600)
+            self.logger.info(f"WiFi network '{ssid}' successfully added")
             
             handler.send_response(200)
             handler.send_header("Content-type", "application/json")
@@ -984,6 +999,7 @@ method=auto
             handler.wfile.write(json.dumps({"success": True, "message": f"Сеть '{ssid}' добавлена"}).encode('utf-8'))
 
         except Exception as e:
+            self.logger.error(f"Error adding WiFi network: {str(e)}")
             handler.send_response(500)
             handler.send_header("Content-type", "application/json")
             handler.end_headers()

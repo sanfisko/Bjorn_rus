@@ -111,5 +111,5 @@
     "timewait_rdp": 0,
     "__title_wifi__": "WiFi Settings",
     "wifi_auto_connect": false,
-    "wifi_script_running": true
+    "wifi_script_running": false
 }
