@@ -215,7 +215,7 @@ def handle_exit_web(signum, frame):
     sys.exit(0)
 
 # Initialize the web thread
-web_thread = WebThread(port=12000)
+web_thread = WebThread(port=8000)
 
 # Set up signal handling for graceful shutdown
 signal.signal(signal.SIGINT, handle_exit_web)
