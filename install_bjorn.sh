@@ -26,6 +26,7 @@ TOTAL_STEPS=8
 
 # Parse command line arguments
 AUTO_EPD_VERSION=""
+AUTO_REBOOT=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -37,10 +38,14 @@ while [[ $# -gt 0 ]]; do
             echo "  --epd-version VERSION     Auto-select E-Paper Display version (1-5)"
             echo "                           1: epd2in13, 2: epd2in13_V2, 3: epd2in13_V3"
             echo "                           4: epd2in13_V4 (default), 5: epd2in7"
+            echo "  --auto-reboot             Automatically reboot after installation"
+            echo "  --no-reboot               Skip automatic reboot after installation"
             echo ""
             echo "Examples:"
             echo "  sudo ./install_bjorn.sh                    # Interactive installation"
             echo "  sudo ./install_bjorn.sh --epd-version 4    # Auto-select epd2in13_V4"
+            echo "  sudo ./install_bjorn.sh --auto-reboot      # Force automatic reboot"
+            echo "  sudo ./install_bjorn.sh --no-reboot        # Skip reboot"
             echo "  curl ... | sudo bash -s -- --epd-version 4 # Auto-select via pipe"
             echo ""
             echo "Make sure you have the necessary permissions and that all dependencies are met."
@@ -49,6 +54,14 @@ while [[ $# -gt 0 ]]; do
         --epd-version)
             AUTO_EPD_VERSION="$2"
             shift 2
+            ;;
+        --auto-reboot)
+            AUTO_REBOOT="yes"
+            shift
+            ;;
+        --no-reboot)
+            AUTO_REBOOT="no"
+            shift
             ;;
         *)
             echo "Unknown option: $1"
@@ -737,17 +750,20 @@ main() {
     echo "2. Web interface will be available at: http://[device-ip]:8000"
     echo "3. Make sure your e-Paper HAT (2.13-inch) is properly connected"
 
-    echo -e "${YELLOW}System will automatically reboot in 15 seconds if no response is given.${NC}"
-    read -t 15 -p "Would you like to reboot now? (y/n) [auto-reboot in 15s]: " reboot_now
-    read_exit_code=$?
-    
-    # Check if read timed out (exit code > 128) or user answered 'y'
-    if [ $read_exit_code -gt 128 ] || [ "$reboot_now" = "y" ]; then
-        if [ $read_exit_code -gt 128 ]; then
-            echo -e "\n${YELLOW}No response received. Automatically rebooting system...${NC}"
-            log "INFO" "Auto-reboot initiated after 15 second timeout."
+    # Handle reboot based on parameters and environment
+    if [ "$AUTO_REBOOT" = "no" ]; then
+        echo -e "${YELLOW}Reboot skipped by user request (--no-reboot).${NC}"
+        echo -e "${YELLOW}Reboot your system manually to apply all changes & run Bjorn service.${NC}"
+        log "INFO" "Reboot skipped by user request."
+    elif [ "$AUTO_REBOOT" = "yes" ] || [ ! -t 0 ]; then
+        # Auto-reboot if explicitly requested or running through pipe
+        if [ "$AUTO_REBOOT" = "yes" ]; then
+            echo -e "${YELLOW}Auto-rebooting system as requested (--auto-reboot)...${NC}"
+            log "INFO" "Auto-reboot initiated by user request."
         else
-            log "INFO" "User requested system reboot."
+            echo -e "${YELLOW}Script running through pipe. Auto-rebooting system in 5 seconds...${NC}"
+            log "INFO" "Auto-reboot initiated (script running through pipe)."
+            sleep 5
         fi
         
         if reboot; then
@@ -757,7 +773,29 @@ main() {
             exit 1
         fi
     else
-        echo -e "${YELLOW}Reboot your system to apply all changes & run Bjorn service.${NC}"
+        # Interactive mode
+        echo -e "${YELLOW}System will automatically reboot in 15 seconds if no response is given.${NC}"
+        read -t 15 -p "Would you like to reboot now? (y/n) [auto-reboot in 15s]: " reboot_now
+        read_exit_code=$?
+        
+        # Check if read timed out (exit code > 128) or user answered 'y'
+        if [ $read_exit_code -gt 128 ] || [ "$reboot_now" = "y" ]; then
+            if [ $read_exit_code -gt 128 ]; then
+                echo -e "\n${YELLOW}No response received. Automatically rebooting system...${NC}"
+                log "INFO" "Auto-reboot initiated after 15 second timeout."
+            else
+                log "INFO" "User requested system reboot."
+            fi
+            
+            if reboot; then
+                log "INFO" "System reboot initiated."
+            else
+                log "ERROR" "Failed to initiate reboot."
+                exit 1
+            fi
+        else
+            echo -e "${YELLOW}Reboot your system to apply all changes & run Bjorn service.${NC}"
+        fi
     fi
 }
 
