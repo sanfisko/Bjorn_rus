@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/c5eb4cc1-0c3d-497d-9422-1614651a84ab" alt="thumbnail_IMG_0546" width="150">
-  <img src="https://github.com/user-attachments/assets/1b490f07-f28e-4418-8d41-14f1492890c6" alt="bjorn_epd-removebg-preview" width="150">
+  <img src="web/images/bjorn_display_new.png" alt="bjorn_epd-removebg-preview" width="150">
 </p>
 
 Bjorn - это сложный автономный инструмент сканирования сети, оценки уязвимостей и наступательной безопасности в стиле «Тамагочи», предназначенный для работы на Raspberry Pi с 2.13-дюймовым e-Paper HAT. Этот документ содержит подробное описание проекта.
