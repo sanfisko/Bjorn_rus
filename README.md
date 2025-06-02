@@ -111,16 +111,16 @@ curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/instal
 ```bash
 # Автоматическое удаление (рекомендуется)
 # Все запросы автоматически подтверждаются через 5 секунд
-sudo ./uninstall_bjorn.sh
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh
 
 # Интерактивный режим (ручное подтверждение каждого шага)
-sudo ./uninstall_bjorn.sh --interactive
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh --interactive
 
 # Изменить таймаут автоподтверждения (например, 10 секунд)
-sudo ./uninstall_bjorn.sh --timeout 10
+sudo chmod +x ./Bjorn_rus/uninstall_bjorn.sh && sudo ./Bjorn_rus/uninstall_bjorn.sh --timeout 10
 
 # Показать справку по параметрам
-./uninstall_bjorn.sh --help
+chmod +x ./Bjorn_rus/uninstall_bjorn.sh && ./Bjorn_rus/uninstall_bjorn.sh --help
 ```
 
 **Возможности скрипта удаления:**
@@ -132,14 +132,7 @@ sudo ./uninstall_bjorn.sh --timeout 10
 
 ## ⚡ Быстрый старт
 
-**Нужна помощь? Не можете найти IP-адрес Bjorn после установки?**
-Используйте мой Bjorn Detector & SSH Launcher:
-
-[https://github.com/sanfisko/bjorn-detector](https://github.com/sanfisko/bjorn-detector)
-
-![ezgif-1-a310f5fe8f](https://github.com/user-attachments/assets/182f82f0-5c3a-48a9-a75e-37b9cfa2263a)
-
-**Хм, всё ещё нужна помощь?**
+**Нужна помощь?**
 Для **подробной информации** о **устранении неполадок** перейдите к [Устранение неполадок](TROUBLESHOOTING.md)
 
 **Быстрая установка**: вы можете использовать самый быстрый способ установки **Bjorn** [Начало работы](#-начало-работы)
