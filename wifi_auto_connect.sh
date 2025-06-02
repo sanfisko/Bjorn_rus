@@ -97,7 +97,6 @@ check_usb() {
         log "  $part"
     done
 
-    found_usb=false
     for part in $usb_partitions; do
         # Проверяем файловую систему и статус монтирования
         fstype=$(lsblk -o FSTYPE -n "$part")
@@ -108,7 +107,6 @@ check_usb() {
             if mount "$part" "$USB_MOUNT" 2>/dev/null; then
                 if ls "$USB_MOUNT"/*.txt >/dev/null 2>&1; then
                     log "USB успешно смонтирован в $USB_MOUNT, найдены .txt файлы"
-                    found_usb=true
                     return 0
                 else
                     log "USB смонтирован, но .txt файлы не найдены"
@@ -185,10 +183,6 @@ connect_to_wifi() {
                     # Пропускаем, если уже подключены к этой сети
                     if [ "$saved_ssid" = "$current_ssid" ]; then
                         log "Уже подключены к $saved_ssid, пропускаем"
-                        if [ -n "$security" ] && [ "$security" != "--" ]; then
-                            log "Подключение к закрытой сети $saved_ssid, завершаем скрипт"
-                            exit 0
-                        fi
                         return 0
                     fi
                     log "Попытка подключения к $saved_ssid"
@@ -196,10 +190,6 @@ connect_to_wifi() {
                     if nmcli dev wifi connect "$saved_ssid" password "$saved_password" 2>&1 | logger -t wifi_usb_connect; then
                         log "Успешно подключено к $saved_ssid"
                         update_status "connected" "Подключено к $saved_ssid"
-                        if [ -n "$security" ] && [ "$security" != "--" ]; then
-                            log "Подключение к закрытой сети $saved_ssid, завершаем скрипт"
-                            exit 0
-                        fi
                         return 0
                     else
                         log "Не удалось подключиться к $saved_ssid"
@@ -249,10 +239,8 @@ while true; do
     # Проверяем WiFi-соединение
     if check_usb; then
         extract_wifi_credentials
-        if [ "$found_usb" = true ]; then
-            umount "$USB_MOUNT" 2>/dev/null
-            log "USB размонтирован из $USB_MOUNT"
-        fi
+        # Размонтируем USB после извлечения учетных данных
+        umount "$USB_MOUNT" 2>/dev/null && log "USB размонтирован из $USB_MOUNT"
     else
         log "Продолжаем без USB"
     fi
