@@ -84,8 +84,7 @@ Bjorn - это мощный инструмент, предназначенный
 
 ```bash
 # Скачайте и запустите установщик
-wget https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh
-sudo chmod +x install_bjorn.sh && sudo ./install_bjorn.sh
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash
 # Выберите вариант 1 для автоматической установки. Это может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
 ```
 

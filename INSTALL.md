@@ -50,8 +50,7 @@ https://www.raspberrypi.com/software/
 
 ```bash
 # Скачайте и запустите установщик
-wget https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh
-sudo chmod +x install_bjorn.sh && sudo ./install_bjorn.sh
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash
 # Выберите вариант 1 для автоматической установки. Это может занять некоторое время, так как будет установлено много пакетов и модулей. В конце необходимо перезагрузиться.
 ```
 
@@ -95,6 +94,12 @@ sudo chmod +x uninstall_bjorn.sh
 
 ```bash
 sudo ./install_bjorn.sh
+```
+
+**Альтернативно**, вы можете использовать одну команду для скачивания и запуска:
+
+```bash
+curl https://raw.githubusercontent.com/sanfisko/Bjorn_rus/refs/heads/main/install_bjorn.sh | sudo bash
 ```
 
 ### 🔧 Конфигурация
