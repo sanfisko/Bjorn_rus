@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест подсказок для переключателей</title>
+    <link rel="stylesheet" href="/web/css/styles.css">
+</head>
+<body>
+    <div class="config-container">
+        <div class="config-form">
+            <div class="left-column">
+                <!-- Тестовые переключатели с подсказками -->
+                <div class="label-switch" title="Ручной режим - отключает автоматическое выполнение действий">
+                    <label class="switch" title="Ручной режим - отключает автоматическое выполнение действий">
+                        <input type="checkbox" id="manual_mode" name="manual_mode" title="Ручной режим - отключает автоматическое выполнение действий">
+                        <span class="slider round" title="Ручной режим - отключает автоматическое выполнение действий"></span>
+                    </label>
+                    <label for="manual_mode" title="Ручной режим - отключает автоматическое выполнение действий">manual_mode</label>
+                </div>
+
+                <div class="label-switch" title="Веб-сервер - включает/отключает веб-интерфейс">
+                    <label class="switch" title="Веб-сервер - включает/отключает веб-интерфейс">
+                        <input type="checkbox" id="websrv" name="websrv" checked title="Веб-сервер - включает/отключает веб-интерфейс">
+                        <span class="slider round" title="Веб-сервер - включает/отключает веб-интерфейс"></span>
+                    </label>
+                    <label for="websrv" title="Веб-сервер - включает/отключает веб-интерфейс">websrv</label>
+                </div>
+
+                <div class="label-switch" title="Режим отладки - включает подробное логирование">
+                    <label class="switch" title="Режим отладки - включает подробное логирование">
+                        <input type="checkbox" id="debug_mode" name="debug_mode" title="Режим отладки - включает подробное логирование">
+                        <span class="slider round" title="Режим отладки - включает подробное логирование"></span>
+                    </label>
+                    <label for="debug_mode" title="Режим отладки - включает подробное логирование">debug_mode</label>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <!-- Тестовые поля ввода с подсказками -->
+                <div class="section-item">
+                    <label for="startup_delay" title="Задержка запуска (сек) - время ожидания перед началом работы">startup_delay:</label>
+                    <input type="text" id="startup_delay" name="startup_delay" value="10" title="Задержка запуска (сек) - время ожидания перед началом работы">
+                </div>
+
+                <div class="section-item">
+                    <label for="web_delay" title="Задержка веб-интерфейса (сек) - интервал обновления веб-страницы">web_delay:</label>
+                    <input type="text" id="web_delay" name="web_delay" value="2" title="Задержка веб-интерфейса (сек) - интервал обновления веб-страницы">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        .config-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .config-form {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .left-column, .right-column {
+            flex: 1;
+        }
+        
+        h2 {
+            color: #e99f00;
+            margin-bottom: 20px;
+        }
+    </style>
+</body>
+</html>
