@@ -15,12 +15,37 @@ USB_MOUNT="/mnt"
 USB_MEDIA="/media/$SUDO_USER"
 # Интервал ожидания между проверками (в секундах)
 CHECK_INTERVAL=30
+# Файл статуса для отображения на экране
+STATUS_FILE="/tmp/wifi_auto_connect_status"
 
 # Функция логирования для отладки
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] [INFO] $1"
     logger -t wifi_usb_connect "$1"
 }
+
+# Функция обновления статуса
+update_status() {
+    local status="$1"
+    local message="$2"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "{\"status\":\"$status\",\"message\":\"$message\",\"timestamp\":\"$timestamp\"}" > "$STATUS_FILE"
+}
+
+# Функция для создания начального статуса
+init_status() {
+    update_status "running" "Скрипт WiFi автоподключения запущен"
+}
+
+# Функция для корректного завершения
+cleanup() {
+    log "Получен сигнал завершения"
+    update_status "stopped" "Скрипт WiFi автоподключения остановлен"
+    exit 0
+}
+
+# Устанавливаем обработчики сигналов
+trap cleanup TERM INT QUIT
 
 # Функция проверки подключения к WiFi
 check_wifi_connection() {
@@ -132,6 +157,7 @@ extract_wifi_credentials() {
 # Функция подключения к WiFi
 connect_to_wifi() {
     log "Сканирование WiFi сетей..."
+    update_status "scanning" "Сканирование WiFi сетей"
     # Получаем список доступных сетей, исключая заголовок
     nmcli dev wifi rescan 2>/dev/null
     networks=$(nmcli -f SSID,SIGNAL,SECURITY dev wifi list | grep -v "^SSID" | sort -k2 -nr)
@@ -165,8 +191,10 @@ connect_to_wifi() {
                         return 0
                     fi
                     log "Попытка подключения к $saved_ssid"
+                    update_status "connecting" "Подключение к $saved_ssid"
                     if nmcli dev wifi connect "$saved_ssid" password "$saved_password" 2>&1 | logger -t wifi_usb_connect; then
                         log "Успешно подключено к $saved_ssid"
+                        update_status "connected" "Подключено к $saved_ssid"
                         if [ -n "$security" ] && [ "$security" != "--" ]; then
                             log "Подключение к закрытой сети $saved_ssid, завершаем скрипт"
                             exit 0
@@ -174,6 +202,7 @@ connect_to_wifi() {
                         return 0
                     else
                         log "Не удалось подключиться к $saved_ssid"
+                        update_status "failed" "Не удалось подключиться к $saved_ssid"
                     fi
                 fi
             fi
@@ -194,11 +223,14 @@ connect_to_wifi() {
                 return 0
             fi
             log "Попытка подключения к открытой сети $ssid"
+            update_status "connecting" "Подключение к открытой сети $ssid"
             if nmcli dev wifi connect "$ssid" 2>&1 | logger -t wifi_usb_connect; then
                 log "Успешно подключено к открытой сети $ssid"
+                update_status "connected" "Подключено к открытой сети $ssid"
                 return 0
             else
                 log "Не удалось подключиться к $ssid"
+                update_status "failed" "Не удалось подключиться к $ssid"
             fi
         fi
     done <<EOF
@@ -211,6 +243,7 @@ EOF
 
 # Основной процесс
 log "Запуск скрипта wifi_auto_connect.sh"
+init_status
 while true; do
     # Проверяем WiFi-соединение
     if check_usb; then
@@ -224,7 +257,12 @@ while true; do
     fi
 
     # Всегда проверяем сети и пытаемся подключиться
-    connect_to_wifi || log "Ожидаем $CHECK_INTERVAL секунд перед следующей попыткой"
+    if connect_to_wifi; then
+        update_status "idle" "Ожидание следующей проверки"
+    else
+        log "Ожидаем $CHECK_INTERVAL секунд перед следующей попыткой"
+        update_status "waiting" "Ожидание $CHECK_INTERVAL сек перед следующей попыткой"
+    fi
     
     # Ждем перед следующей итерацией
     sleep "$CHECK_INTERVAL"

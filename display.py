@@ -208,6 +208,7 @@ class Display:
                 self.shared_data.usb_active = self.is_usb_connected()
                 self.shared_data.wifi_ssid = self.get_wifi_ssid()
                 self.shared_data.ip_address = self.get_ip_address()
+                self.update_wifi_auto_status()
                 self.get_open_files()
 
             except (FileNotFoundError, pd.errors.EmptyDataError) as e:
@@ -380,6 +381,37 @@ class Display:
             logger.error(f"Error checking USB connection status: {e}")
             return False
 
+    def update_wifi_auto_status(self):
+        """Обновить статус WiFi автоподключения из файла статуса."""
+        try:
+            status_file = "/tmp/wifi_auto_connect_status"
+            if os.path.exists(status_file):
+                with open(status_file, 'r') as f:
+                    import json
+                    status_data = json.load(f)
+                    self.shared_data.wifi_auto_status = status_data.get("status", "stopped")
+                    self.shared_data.wifi_auto_message = status_data.get("message", "Неизвестно")
+                    self.shared_data.wifi_auto_timestamp = status_data.get("timestamp", "")
+            else:
+                # Если файл не существует, проверяем, запущен ли процесс
+                try:
+                    result = subprocess.Popen(['pgrep', '-f', 'wifi_auto_connect.sh'], 
+                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                    output, error = result.communicate()
+                    if result.returncode == 0 and output.strip():
+                        self.shared_data.wifi_auto_status = "running"
+                        self.shared_data.wifi_auto_message = "Процесс запущен"
+                    else:
+                        self.shared_data.wifi_auto_status = "stopped"
+                        self.shared_data.wifi_auto_message = "Процесс остановлен"
+                except:
+                    self.shared_data.wifi_auto_status = "stopped"
+                    self.shared_data.wifi_auto_message = "Статус неизвестен"
+        except Exception as e:
+            logger.error(f"Error updating WiFi auto status: {e}")
+            self.shared_data.wifi_auto_status = "stopped"
+            self.shared_data.wifi_auto_message = "Ошибка чтения статуса"
+
     def run(self):
         """Main loop for updating the EPD display with shared data."""
         self.manual_mode_txt = ""
@@ -414,6 +446,10 @@ class Display:
                     image.paste(self.shared_data.connected, (int(104 * self.scale_factor_x), int(3 * self.scale_factor_y)))
                 if self.shared_data.usb_active:
                     image.paste(self.shared_data.usb, (int(90 * self.scale_factor_x), int(4 * self.scale_factor_y)))
+                
+                # Индикатор WiFi автоподключения (справа от IDLE)
+                wifi_auto_icon = self.shared_data.get_wifi_auto_icon()
+                image.paste(wifi_auto_icon, (int(70 * self.scale_factor_x), int(65 * self.scale_factor_y)))
 
                 stats = [
                     (self.shared_data.target, (int(8 * self.scale_factor_x), int(22 * self.scale_factor_y)), (int(28 * self.scale_factor_x), int(22 * self.scale_factor_y)), str(self.shared_data.targetnbr)),
