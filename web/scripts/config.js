@@ -9,41 +9,94 @@ function generateConfigForm(config) {
     const rightColumn = document.createElement('div');
     rightColumn.classList.add('right-column');
     
+    // Описания для всплывающих подсказок
+    const tooltips = {
+        "manual_mode": "Ручной режим - отключает автоматическое выполнение действий",
+        "websrv": "Веб-сервер - включает/отключает веб-интерфейс",
+        "web_increment": "Инкремент веб-страницы - автоматическое обновление данных",
+        "debug_mode": "Режим отладки - включает подробное логирование",
+        "scan_vuln_running": "Сканирование уязвимостей - запускает поиск уязвимостей",
+        "retry_success_actions": "Повтор успешных действий - повторяет успешно выполненные атаки",
+        "retry_failed_actions": "Повтор неудачных действий - повторяет неудачные попытки атак",
+        "blacklistcheck": "Проверка черного списка - исключает заблокированные IP/MAC",
+        "displaying_csv": "Отображение CSV - показывает данные в табличном формате",
+        "log_debug": "Логи отладки - записывает отладочную информацию",
+        "log_info": "Информационные логи - записывает общую информацию",
+        "log_warning": "Логи предупреждений - записывает предупреждения",
+        "log_error": "Логи ошибок - записывает ошибки",
+        "log_critical": "Критические логи - записывает критические ошибки",
+        "startup_delay": "Задержка запуска (сек) - время ожидания перед началом работы",
+        "web_delay": "Задержка веб-интерфейса (сек) - интервал обновления веб-страницы",
+        "screen_delay": "Задержка экрана (сек) - интервал обновления дисплея",
+        "comment_delaymin": "Мин. задержка комментариев (мин) - минимальное время показа комментариев",
+        "comment_delaymax": "Макс. задержка комментариев (мин) - максимальное время показа комментариев",
+        "livestatus_delay": "Задержка статуса (сек) - интервал обновления статуса",
+        "image_display_delaymin": "Мин. задержка изображений (сек) - минимальное время показа изображений",
+        "image_display_delaymax": "Макс. задержка изображений (сек) - максимальное время показа изображений",
+        "scan_interval": "Интервал сканирования (сек) - частота сканирования сети",
+        "scan_vuln_interval": "Интервал сканирования уязвимостей (сек) - частота поиска уязвимостей",
+        "failed_retry_delay": "Задержка повтора неудач (сек) - время ожидания перед повтором неудачной атаки",
+        "success_retry_delay": "Задержка повтора успехов (сек) - время ожидания перед повтором успешной атаки",
+        "ref_width": "Ширина экрана (пикс) - ширина e-paper дисплея",
+        "ref_height": "Высота экрана (пикс) - высота e-paper дисплея",
+        "epd_type": "Тип дисплея - модель e-paper дисплея",
+        "portlist": "Список портов - порты для сканирования (через запятую)",
+        "mac_scan_blacklist": "Черный список MAC - исключенные MAC-адреса (через запятую)",
+        "ip_scan_blacklist": "Черный список IP - исключенные IP-адреса (через запятую)",
+        "steal_file_names": "Имена файлов для кражи - конкретные имена файлов (через запятую)",
+        "steal_file_extensions": "Расширения файлов для кражи - типы файлов для поиска (через запятую)",
+        "nmap_scan_aggressivity": "Агрессивность nmap - параметр скорости сканирования (-T0 до -T5)",
+        "portstart": "Начальный порт - первый порт диапазона для сканирования",
+        "portend": "Конечный порт - последний порт диапазона для сканирования",
+        "timewait_smb": "Ожидание SMB (сек) - задержка между SMB-атаками",
+        "timewait_ssh": "Ожидание SSH (сек) - задержка между SSH-атаками",
+        "timewait_telnet": "Ожидание Telnet (сек) - задержка между Telnet-атаками",
+        "timewait_ftp": "Ожидание FTP (сек) - задержка между FTP-атаками",
+        "timewait_sql": "Ожидание SQL (сек) - задержка между SQL-атаками",
+        "timewait_rdp": "Ожидание RDP (сек) - задержка между RDP-атаками",
+        "wifi_auto_connect": "Автоподключение WiFi - автоматически подключается к известным сетям",
+        "wifi_script_running": "Скрипт WiFi активен - включает/отключает WiFi-скрипт"
+    };
+    
     for (const [key, value] of Object.entries(config)) {
         if (key.startsWith("__title_")) {
             rightColumn.innerHTML += `<div class="section-title"><b>${value}</b></div>`;
         } else if (typeof value === "boolean") {
             const checked = value ? "checked" : "";
+            const tooltip = tooltips[key] || key;
             leftColumn.innerHTML += `
     
                 <div class="label-switch">
                     <label class="switch">
-                        <input type="checkbox" id="${key}" name="${key}" ${checked}>
+                        <input type="checkbox" id="${key}" name="${key}" ${checked} title="${tooltip}">
                         <span class="slider round"></span>
                     </label>
-                    <label for="${key}">${key}</label>
+                    <label for="${key}" title="${tooltip}">${key}</label>
                 </div>
             `;
         } else if (Array.isArray(value)) {
             const listValue = value.join(',');
+            const tooltip = tooltips[key] || key;
             rightColumn.innerHTML += `
                 <div class="section-item">
-                    <label for="${key}">${key}:</label>
-                    <input type="text" id="${key}" name="${key}" value="${listValue}">
+                    <label for="${key}" title="${tooltip}">${key}:</label>
+                    <input type="text" id="${key}" name="${key}" value="${listValue}" title="${tooltip}">
                 </div>
             `;
         } else if (!isNaN(value) && !key.toLowerCase().includes("ip") && !key.toLowerCase().includes("mac")) {
+            const tooltip = tooltips[key] || key;
             rightColumn.innerHTML += `
                 <div class="section-item">
-                    <label for="${key}">${key}:</label>
-                    <input type="number" id="${key}" name="${key}" value="${value}">
+                    <label for="${key}" title="${tooltip}">${key}:</label>
+                    <input type="number" id="${key}" name="${key}" value="${value}" title="${tooltip}">
                 </div>
             `;
         } else {
+            const tooltip = tooltips[key] || key;
             rightColumn.innerHTML += `
                 <div class="section-item">
-                    <label for="${key}">${key}:</label>
-                    <input type="text" id="${key}" name="${key}" value="${value}">
+                    <label for="${key}" title="${tooltip}">${key}:</label>
+                    <input type="text" id="${key}" name="${key}" value="${value}" title="${tooltip}">
                 </div>
             `;
         }

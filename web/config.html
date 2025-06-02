@@ -33,22 +33,22 @@
     </div>
     
     <div class="console-toolbar">
-        <button type="button" class="toolbar-button" onclick="adjustConfigFontSize(-1)" title="-">
+        <button type="button" class="toolbar-button" onclick="adjustConfigFontSize(-1)" title="Уменьшить размер шрифта">
             <img src="/web/images/less.png" alt="Icon_less" style="height: 50px;">
         </button>
-        <button type="button" class="toolbar-button" onclick="saveConfig()" title="Сохранить">
+        <button type="button" class="toolbar-button" onclick="saveConfig()" title="Сохранить конфигурацию">
             <img src="/web/images/save.png" alt="Icon_plus" style="height: 50px;">
         </button>
-        <button type="button" class="toolbar-button" onclick="restoreDefault()" title="Restore Default">
+        <button type="button" class="toolbar-button" onclick="restoreDefault()" title="Восстановить настройки по умолчанию">
             <img src="/web/images/restore.png" alt="Icon_plus" style="height: 50px;">
         </button>
-        <button id="toggle-toolbar" type="button" class="toolbar-button" onclick="toggleConfigToolbar()" data-open="false">
+        <button id="toggle-toolbar" type="button" class="toolbar-button" onclick="toggleConfigToolbar()" data-open="false" title="Скрыть/показать панель навигации">
             <img id="toggle-icon" src="/web/images/hide.png" alt="Toggle Панель инструментов" style="height: 50px;">
         </button>
-        <button type="button" class="toolbar-button" onclick="toggleWifiPanel()">
+        <button type="button" class="toolbar-button" onclick="toggleWifiPanel()" title="Открыть панель управления WiFi">
             <img src="/web/images/wifi.png" alt="wifi" style="height: 50px;">
         </button>
-        <button type="button" class="toolbar-button" onclick="adjustConfigFontSize(1)" title="+">
+        <button type="button" class="toolbar-button" onclick="adjustConfigFontSize(1)" title="Увеличить размер шрифта">
             <img src="/web/images/plus.png" alt="Icon_plus" style="height: 50px;">
         </button>
     </div>
@@ -67,9 +67,9 @@
         <div class="wifi-add-section">
             <h4>Добавить известную сеть</h4>
             <div class="wifi-form">
-                <input type="text" id="wifi-ssid-input" placeholder="SSID (название сети)" maxlength="32">
-                <input type="password" id="wifi-password-input" placeholder="Пароль" maxlength="63">
-                <button onclick="addWifiNetwork()" class="wifi-add-btn">Добавить сеть</button>
+                <input type="text" id="wifi-ssid-input" placeholder="SSID (название сети)" maxlength="32" title="Введите название WiFi сети (SSID)">
+                <input type="password" id="wifi-password-input" placeholder="Пароль" maxlength="63" title="Введите пароль для WiFi сети">
+                <button onclick="addWifiNetwork()" class="wifi-add-btn" title="Добавить сеть в список известных для автоподключения">Добавить сеть</button>
             </div>
             <div id="wifi-add-status" class="wifi-status"></div>
         </div>
@@ -78,13 +78,13 @@
         <div class="wifi-known-section">
             <h4>Известные сети</h4>
             <ul id="wifi-known-list"></ul>
-            <button onclick="loadKnownNetworks()" class="wifi-refresh-btn">Обновить список</button>
+            <button onclick="loadKnownNetworks()" class="wifi-refresh-btn" title="Обновить список сохраненных WiFi сетей">Обновить список</button>
         </div>
         
         <!-- Available Networks List -->
         <div class="wifi-available-section">
             <h4>Доступные сети</h4>
-            <ul id="wifi-list"></ul>
+            <ul id="wifi-list" title="Список обнаруженных WiFi сетей в радиусе действия"></ul>
         </div>
     </div>
 </body>
