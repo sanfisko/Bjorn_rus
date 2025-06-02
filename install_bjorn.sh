@@ -246,28 +246,56 @@ install_dependencies() {
 configure_system_limits() {
     log "INFO" "Configuring system limits..."
 
-    # Configure /etc/security/limits.conf
-    cat >> /etc/security/limits.conf << EOF
+    # Configure /etc/security/limits.conf - check if already configured
+    if ! grep -q "* soft nofile 65535" /etc/security/limits.conf; then
+        cat >> /etc/security/limits.conf << EOF
 * soft nofile 65535
 * hard nofile 65535
 root soft nofile 65535
 root hard nofile 65535
 EOF
+        log "INFO" "Added nofile limits to limits.conf"
+    else
+        log "INFO" "nofile limits already configured in limits.conf, skipping"
+    fi
 
-    # Configure systemd limits
-    sed -i '/^#DefaultLimitNOFILE=/d' /etc/systemd/system.conf
-    echo "DefaultLimitNOFILE=65535" >> /etc/systemd/system.conf
-    sed -i '/^#DefaultLimitNOFILE=/d' /etc/systemd/user.conf
-    echo "DefaultLimitNOFILE=65535" >> /etc/systemd/user.conf
+    # Configure systemd limits - check if already configured
+    if ! grep -q "^DefaultLimitNOFILE=65535" /etc/systemd/system.conf; then
+        sed -i '/^#DefaultLimitNOFILE=/d' /etc/systemd/system.conf
+        sed -i '/^DefaultLimitNOFILE=/d' /etc/systemd/system.conf
+        echo "DefaultLimitNOFILE=65535" >> /etc/systemd/system.conf
+        log "INFO" "Added DefaultLimitNOFILE to system.conf"
+    else
+        log "INFO" "DefaultLimitNOFILE already configured in system.conf, skipping"
+    fi
+    
+    if ! grep -q "^DefaultLimitNOFILE=65535" /etc/systemd/user.conf; then
+        sed -i '/^#DefaultLimitNOFILE=/d' /etc/systemd/user.conf
+        sed -i '/^DefaultLimitNOFILE=/d' /etc/systemd/user.conf
+        echo "DefaultLimitNOFILE=65535" >> /etc/systemd/user.conf
+        log "INFO" "Added DefaultLimitNOFILE to user.conf"
+    else
+        log "INFO" "DefaultLimitNOFILE already configured in user.conf, skipping"
+    fi
 
-    # Create /etc/security/limits.d/90-nofile.conf
-    cat > /etc/security/limits.d/90-nofile.conf << EOF
+    # Create /etc/security/limits.d/90-nofile.conf - check if already exists
+    if [ ! -f "/etc/security/limits.d/90-nofile.conf" ]; then
+        cat > /etc/security/limits.d/90-nofile.conf << EOF
 root soft nofile 65535
 root hard nofile 65535
 EOF
+        log "INFO" "Created 90-nofile.conf"
+    else
+        log "INFO" "90-nofile.conf already exists, skipping"
+    fi
 
-    # Configure sysctl
-    echo "fs.file-max = 2097152" >> /etc/sysctl.conf
+    # Configure sysctl - check if fs.file-max already exists
+    if ! grep -q "fs.file-max" /etc/sysctl.conf; then
+        echo "fs.file-max = 2097152" >> /etc/sysctl.conf
+        log "INFO" "Added fs.file-max to sysctl.conf"
+    else
+        log "INFO" "fs.file-max already configured in sysctl.conf, skipping"
+    fi
     sysctl -p
 
     check_success "System limits configuration completed"
@@ -296,13 +324,13 @@ setup_bjorn() {
 
     # Check for existing BJORN directory
     cd /home/$BJORN_USER
-    if [ -d "Bjorn" ]; then
+    if [ -d "Bjorn_rus" ]; then
         log "INFO" "Using existing BJORN directory"
         echo -e "${GREEN}Using existing BJORN directory${NC}"
     else
         # No existing directory, proceed with clone
         log "INFO" "Cloning BJORN repository"
-        git clone https://github.com/sanfisko/Bjorn_rus.git
+        git clone https://github.com/snf300525/Bjorn_rus.git
         check_success "Cloned BJORN repository"
     fi
 
@@ -325,8 +353,8 @@ setup_bjorn() {
     check_success "Installed Python requirements"
 
     # Set correct permissions
-    chown -R $BJORN_USER:$BJORN_USER /home/$BJORN_USER/Bjorn
-    chmod -R 755 /home/$BJORN_USER/Bjorn
+    chown -R $BJORN_USER:$BJORN_USER /home/$BJORN_USER/Bjorn_rus
+    chmod -R 755 /home/$BJORN_USER/Bjorn_rus
     
     # Add bjorn user to necessary groups
     usermod -a -G spi,gpio,i2c $BJORN_USER
@@ -374,9 +402,20 @@ ExecStartPost=/bin/bash -c 'FILE_LIMIT=\$(ulimit -n); THRESHOLD=\$(( FILE_LIMIT 
 WantedBy=multi-user.target
 EOF
 
-    # Configure PAM
-    echo "session required pam_limits.so" >> /etc/pam.d/common-session
-    echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
+    # Configure PAM - check if already configured
+    if ! grep -q "session required pam_limits.so" /etc/pam.d/common-session; then
+        echo "session required pam_limits.so" >> /etc/pam.d/common-session
+        log "INFO" "Added pam_limits.so to common-session"
+    else
+        log "INFO" "pam_limits.so already configured in common-session, skipping"
+    fi
+    
+    if ! grep -q "session required pam_limits.so" /etc/pam.d/common-session-noninteractive; then
+        echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
+        log "INFO" "Added pam_limits.so to common-session-noninteractive"
+    else
+        log "INFO" "pam_limits.so already configured in common-session-noninteractive, skipping"
+    fi
 
     # Create WiFi Auto Connect service
     cp $BJORN_PATH/wifi-auto-connect.service /etc/systemd/system/
@@ -393,11 +432,21 @@ EOF
 configure_usb_gadget() {
     log "INFO" "Configuring USB Gadget..."
 
-    # Modify cmdline.txt
-    sed -i 's/rootwait/rootwait modules-load=dwc2,g_ether/' /boot/firmware/cmdline.txt
+    # Modify cmdline.txt - check if already configured
+    if ! grep -q "modules-load=dwc2,g_ether" /boot/firmware/cmdline.txt; then
+        sed -i 's/rootwait/rootwait modules-load=dwc2,g_ether/' /boot/firmware/cmdline.txt
+        log "INFO" "Added USB gadget modules to cmdline.txt"
+    else
+        log "INFO" "USB gadget modules already configured in cmdline.txt, skipping"
+    fi
 
-    # Modify config.txt
-    echo "dtoverlay=dwc2" >> /boot/firmware/config.txt
+    # Modify config.txt - check if already configured
+    if ! grep -q "dtoverlay=dwc2" /boot/firmware/config.txt; then
+        echo "dtoverlay=dwc2" >> /boot/firmware/config.txt
+        log "INFO" "Added dtoverlay=dwc2 to config.txt"
+    else
+        log "INFO" "dtoverlay=dwc2 already configured in config.txt, skipping"
+    fi
 
     # Create USB gadget script
     cat > /usr/local/bin/usb-gadget.sh << 'EOF'
@@ -467,14 +516,19 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
-    # Configure network interface
-    cat >> /etc/network/interfaces << EOF
+    # Configure network interface - check if already configured
+    if ! grep -q "allow-hotplug usb0" /etc/network/interfaces; then
+        cat >> /etc/network/interfaces << EOF
 
 allow-hotplug usb0
 iface usb0 inet static
     address 172.20.2.1
     netmask 255.255.255.0
 EOF
+        log "INFO" "Added usb0 interface configuration to /etc/network/interfaces"
+    else
+        log "INFO" "usb0 interface already configured in /etc/network/interfaces, skipping"
+    fi
 
     # Enable and start services
     systemctl daemon-reload
@@ -529,10 +583,9 @@ main() {
         exit 1
     fi
 
-    echo -e "${BLUE}BJORN Installation Options:${NC}"
-    echo "1. Full installation (recommended)"
-    echo "2. Custom installation"
-    read -p "Choose an option (1/2): " install_option
+    # Automatically use full installation
+    install_option=1
+    log "INFO" "Using full installation (recommended)"
 
     # E-Paper Display Selection
     echo -e "\n${BLUE}Please select your E-Paper Display version:${NC}"
@@ -543,7 +596,7 @@ main() {
     echo "5. epd2in7"
     
     while true; do
-        read -p "Enter your choice (1-4): " epd_choice
+        read -p "Enter your choice (1-5): " epd_choice
         case $epd_choice in
             1) EPD_VERSION="epd2in13"; break;;
             2) EPD_VERSION="epd2in13_V2"; break;;
@@ -556,54 +609,30 @@ main() {
 
     log "INFO" "Selected E-Paper Display version: $EPD_VERSION"
 
-    case $install_option in
-        1)
-            CURRENT_STEP=1; show_progress "Checking system compatibility"
-            check_system_compatibility
+    # Execute full installation steps
+    CURRENT_STEP=1; show_progress "Checking system compatibility"
+    check_system_compatibility
 
-            CURRENT_STEP=2; show_progress "Installing system dependencies"
-            install_dependencies
+    CURRENT_STEP=2; show_progress "Installing system dependencies"
+    install_dependencies
 
-            CURRENT_STEP=3; show_progress "Configuring system limits"
-            configure_system_limits
+    CURRENT_STEP=3; show_progress "Configuring system limits"
+    configure_system_limits
 
-            CURRENT_STEP=4; show_progress "Configuring interfaces"
-            configure_interfaces
+    CURRENT_STEP=4; show_progress "Configuring interfaces"
+    configure_interfaces
 
-            CURRENT_STEP=5; show_progress "Setting up BJORN"
-            setup_bjorn
+    CURRENT_STEP=5; show_progress "Setting up BJORN"
+    setup_bjorn
 
-            CURRENT_STEP=6; show_progress "Configuring USB Gadget"
-            configure_usb_gadget
+    CURRENT_STEP=6; show_progress "Configuring USB Gadget"
+    configure_usb_gadget
 
-            CURRENT_STEP=7; show_progress "Setting up services"
-            setup_services
+    CURRENT_STEP=7; show_progress "Setting up services"
+    setup_services
 
-            CURRENT_STEP=8; show_progress "Verifying installation"
-            verify_installation
-            ;;
-        2)
-            echo "Custom installation - select components to install:"
-            read -p "Install dependencies? (y/n): " deps
-            read -p "Configure system limits? (y/n): " limits
-            read -p "Configure interfaces? (y/n): " interfaces
-            read -p "Setup BJORN? (y/n): " bjorn
-            read -p "Configure USB Gadget? (y/n): " usb_gadget
-            read -p "Setup services? (y/n): " services
-
-            [ "$deps" = "y" ] && install_dependencies
-            [ "$limits" = "y" ] && configure_system_limits
-            [ "$interfaces" = "y" ] && configure_interfaces
-            [ "$bjorn" = "y" ] && setup_bjorn
-            [ "$usb_gadget" = "y" ] && configure_usb_gadget
-            [ "$services" = "y" ] && setup_services
-            verify_installation
-            ;;
-        *)
-            log "ERROR" "Invalid option selected"
-            clean_exit 1
-            ;;
-    esac
+    CURRENT_STEP=8; show_progress "Verifying installation"
+    verify_installation
 
     #removed git files
     find "$BJORN_PATH" -name ".git*" -exec rm -rf {} +
