@@ -770,17 +770,42 @@ method=auto
                         subprocess.Popen(['sudo', script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                         self.logger.info("WiFi auto-connect script started manually with sudo")
                     else:
-                        # Stop the script by killing the process
-                        subprocess.run("sudo pkill -f wifi_auto_connect.sh", shell=True, check=False)
+                        # Stop the script by killing the process more forcefully
+                        subprocess.run("sudo pkill -TERM -f wifi_auto_connect.sh", shell=True, check=False)
+                        time.sleep(1)
+                        subprocess.run("sudo pkill -KILL -f wifi_auto_connect.sh", shell=True, check=False)
+                        # Also update status file manually
+                        try:
+                            status_file = '/tmp/wifi_auto_connect_status'
+                            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+                            status_data = {"status": "stopped", "message": "Скрипт остановлен через веб-интерфейс", "timestamp": timestamp}
+                            with open(status_file, 'w') as f:
+                                json.dump(status_data, f)
+                            os.chmod(status_file, 0o666)
+                        except Exception as e:
+                            self.logger.warning(f"Failed to update status file: {e}")
                         self.logger.info("WiFi auto-connect script stopped manually")
                     
                     # Wait a moment and check the actual status
                     import time
-                    time.sleep(1)
-                    result = subprocess.run("pgrep -f wifi_auto_connect.sh", shell=True, capture_output=True, text=True)
-                    actual_status = result.returncode == 0
+                    time.sleep(2)  # Увеличиваем время ожидания
+                    result = subprocess.run("ps aux | grep wifi_auto_connect.sh | grep -v grep", shell=True, capture_output=True, text=True)
+                    actual_status = result.returncode == 0 and result.stdout.strip() != ""
+                    
+                    # Дополнительная проверка через файл статуса
+                    status_file_exists = os.path.exists('/tmp/wifi_auto_connect_status')
+                    if status_file_exists:
+                        try:
+                            with open('/tmp/wifi_auto_connect_status', 'r') as f:
+                                status_data = json.loads(f.read())
+                                file_status = status_data.get('status', 'stopped')
+                                if file_status != 'stopped':
+                                    actual_status = True
+                        except:
+                            pass
+                    
                     current_config['wifi_script_running'] = actual_status
-                    self.logger.info(f"WiFi script actual status: {actual_status}")
+                    self.logger.info(f"WiFi script actual status: {actual_status} (process: {result.returncode == 0}, status_file: {status_file_exists})")
                     
                 except Exception as e:
                     self.logger.warning(f"Failed to manage wifi script manually: {e}")
