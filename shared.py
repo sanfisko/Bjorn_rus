@@ -270,6 +270,10 @@ class SharedData:
         self.usb_active = False
         self.wifi_ssid = "Не подключено"
         self.ip_address = "Не найден"
+        # WiFi автоподключение статус
+        self.wifi_auto_status = "stopped"
+        self.wifi_auto_message = "Остановлен"
+        self.wifi_auto_timestamp = ""
         self.bjornsays = "Hacking away..."
         self.bjornorch_status = "IDLE"
         self.bjornstatustext = "IDLE"
@@ -485,6 +489,15 @@ class SharedData:
             self.ethernet = self.load_image(os.path.join(self.staticpicdir, 'ethernet.bmp'))
             self.usb = self.load_image(os.path.join(self.staticpicdir, 'usb.bmp'))
             self.level = self.load_image(os.path.join(self.staticpicdir, 'level.bmp'))
+            
+            # WiFi автоподключение иконки
+            self.wifi_auto_running = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_running.png'))
+            self.wifi_auto_connecting = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_connecting.png'))
+            self.wifi_auto_connected = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_connected.png'))
+            self.wifi_auto_failed = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_failed.png'))
+            self.wifi_auto_waiting = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_waiting.png'))
+            self.wifi_auto_scanning = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_scanning.png'))
+            self.wifi_auto_stopped = self.load_image(os.path.join(self.staticpicdir, 'wifi_auto_stopped.png'))
             self.cred = self.load_image(os.path.join(self.staticpicdir, 'cred.bmp'))
             self.attack = self.load_image(os.path.join(self.staticpicdir, 'attack.bmp'))
             self.attacks = self.load_image(os.path.join(self.staticpicdir, 'attacks.bmp'))
@@ -674,3 +687,17 @@ class SharedData:
         """Print a debug message if debug mode is enabled."""
         if self.config['debug_mode']:
             logger.debug(message)
+    
+    def get_wifi_auto_icon(self):
+        """Получить иконку для текущего статуса WiFi автоподключения."""
+        status_icons = {
+            "running": self.wifi_auto_running,
+            "connecting": self.wifi_auto_connecting,
+            "connected": self.wifi_auto_connected,
+            "failed": self.wifi_auto_failed,
+            "waiting": self.wifi_auto_waiting,
+            "scanning": self.wifi_auto_scanning,
+            "stopped": self.wifi_auto_stopped,
+            "idle": self.wifi_auto_running  # idle считаем как running
+        }
+        return status_icons.get(self.wifi_auto_status, self.wifi_auto_stopped)
