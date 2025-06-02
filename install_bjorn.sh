@@ -649,8 +649,19 @@ main() {
     echo "2. Web interface will be available at: http://[device-ip]:8000"
     echo "3. Make sure your e-Paper HAT (2.13-inch) is properly connected"
 
-    read -p "Would you like to reboot now? (y/n): " reboot_now
-    if [ "$reboot_now" = "y" ]; then
+    echo -e "${YELLOW}System will automatically reboot in 15 seconds if no response is given.${NC}"
+    read -t 15 -p "Would you like to reboot now? (y/n) [auto-reboot in 15s]: " reboot_now
+    read_exit_code=$?
+    
+    # Check if read timed out (exit code > 128) or user answered 'y'
+    if [ $read_exit_code -gt 128 ] || [ "$reboot_now" = "y" ]; then
+        if [ $read_exit_code -gt 128 ]; then
+            echo -e "\n${YELLOW}No response received. Automatically rebooting system...${NC}"
+            log "INFO" "Auto-reboot initiated after 15 second timeout."
+        else
+            log "INFO" "User requested system reboot."
+        fi
+        
         if reboot; then
             log "INFO" "System reboot initiated."
         else
