@@ -24,11 +24,39 @@ BJORN_PATH="/home/${BJORN_USER}/Bjorn_rus"
 CURRENT_STEP=0
 TOTAL_STEPS=8
 
-if [[ "$1" == "--help" ]]; then
-    echo "Usage: sudo ./install_bjorn.sh"
-    echo "Make sure you have the necessary permissions and that all dependencies are met."
-    exit 0
-fi
+# Parse command line arguments
+AUTO_EPD_VERSION=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help)
+            echo "Usage: sudo ./install_bjorn.sh [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --help                    Show this help message"
+            echo "  --epd-version VERSION     Auto-select E-Paper Display version (1-5)"
+            echo "                           1: epd2in13, 2: epd2in13_V2, 3: epd2in13_V3"
+            echo "                           4: epd2in13_V4 (default), 5: epd2in7"
+            echo ""
+            echo "Examples:"
+            echo "  sudo ./install_bjorn.sh                    # Interactive installation"
+            echo "  sudo ./install_bjorn.sh --epd-version 4    # Auto-select epd2in13_V4"
+            echo "  curl ... | sudo bash -s -- --epd-version 4 # Auto-select via pipe"
+            echo ""
+            echo "Make sure you have the necessary permissions and that all dependencies are met."
+            exit 0
+            ;;
+        --epd-version)
+            AUTO_EPD_VERSION="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information."
+            exit 1
+            ;;
+    esac
+done
 
 # Function to display progress
 show_progress() {
@@ -613,34 +641,59 @@ main() {
     log "INFO" "Using full installation (recommended)"
 
     # E-Paper Display Selection
-    echo -e "\n${BLUE}Please select your E-Paper Display version:${NC}"
-    echo "1. epd2in13"
-    echo "2. epd2in13_V2"
-    echo "3. epd2in13_V3"
-    echo "4. epd2in13_V4 (default)"
-    echo "5. epd2in7"
-    echo -e "${YELLOW}Auto-selecting epd2in13_V4 in 15 seconds if no response is given.${NC}"
-    
-    while true; do
-        read -t 15 -p "Enter your choice (1-5) [auto-select 4 in 15s]: " epd_choice
-        read_exit_code=$?
-        
-        # Check if read timed out (exit code > 128)
-        if [ $read_exit_code -gt 128 ]; then
-            epd_choice=4
-            echo -e "\n${YELLOW}No response received. Auto-selecting epd2in13_V4 (option 4)...${NC}"
-            log "INFO" "Auto-selected E-Paper Display version: epd2in13_V4 after 15 second timeout."
-        fi
-        
+    if [ -n "$AUTO_EPD_VERSION" ]; then
+        # Use command line parameter
+        epd_choice="$AUTO_EPD_VERSION"
+        echo -e "\n${BLUE}Using command line parameter for E-Paper Display version: $epd_choice${NC}"
         case $epd_choice in
-            1) EPD_VERSION="epd2in13"; break;;
-            2) EPD_VERSION="epd2in13_V2"; break;;
-            3) EPD_VERSION="epd2in13_V3"; break;;
-            4) EPD_VERSION="epd2in13_V4"; break;;
-            5) EPD_VERSION="epd2in7"; break;;
-            *) echo -e "${RED}Invalid choice. Please select 1-5.${NC}";;
+            1) EPD_VERSION="epd2in13";;
+            2) EPD_VERSION="epd2in13_V2";;
+            3) EPD_VERSION="epd2in13_V3";;
+            4) EPD_VERSION="epd2in13_V4";;
+            5) EPD_VERSION="epd2in7";;
+            *) 
+                echo -e "${RED}Invalid E-Paper Display version: $epd_choice. Using default epd2in13_V4.${NC}"
+                EPD_VERSION="epd2in13_V4"
+                ;;
         esac
-    done
+        log "INFO" "Selected E-Paper Display version from command line: $EPD_VERSION"
+    elif [ ! -t 0 ]; then
+        # Running through pipe (stdin is not a terminal)
+        epd_choice=4
+        echo -e "\n${YELLOW}Script running through pipe. Auto-selecting epd2in13_V4 (option 4)...${NC}"
+        log "INFO" "Auto-selected E-Paper Display version: epd2in13_V4 (script running through pipe)."
+        EPD_VERSION="epd2in13_V4"
+    else
+        # Interactive mode
+        echo -e "\n${BLUE}Please select your E-Paper Display version:${NC}"
+        echo "1. epd2in13"
+        echo "2. epd2in13_V2"
+        echo "3. epd2in13_V3"
+        echo "4. epd2in13_V4 (default)"
+        echo "5. epd2in7"
+        echo -e "${YELLOW}Auto-selecting epd2in13_V4 in 15 seconds if no response is given.${NC}"
+        
+        while true; do
+            read -t 15 -p "Enter your choice (1-5) [auto-select 4 in 15s]: " epd_choice </dev/tty
+            read_exit_code=$?
+            
+            # Check if read timed out (exit code > 128)
+            if [ $read_exit_code -gt 128 ]; then
+                epd_choice=4
+                echo -e "\n${YELLOW}No response received. Auto-selecting epd2in13_V4 (option 4)...${NC}"
+                log "INFO" "Auto-selected E-Paper Display version: epd2in13_V4 after 15 second timeout."
+            fi
+            
+            case $epd_choice in
+                1) EPD_VERSION="epd2in13"; break;;
+                2) EPD_VERSION="epd2in13_V2"; break;;
+                3) EPD_VERSION="epd2in13_V3"; break;;
+                4) EPD_VERSION="epd2in13_V4"; break;;
+                5) EPD_VERSION="epd2in7"; break;;
+                *) echo -e "${RED}Invalid choice. Please select 1-5.${NC}";;
+            esac
+        done
+    fi
 
     log "INFO" "Selected E-Paper Display version: $EPD_VERSION"
 
