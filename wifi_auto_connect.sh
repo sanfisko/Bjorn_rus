@@ -37,6 +37,16 @@ init_status() {
     update_status "running" "Скрипт WiFi автоподключения запущен"
 }
 
+# Функция для корректного завершения
+cleanup() {
+    log "Получен сигнал завершения"
+    update_status "stopped" "Скрипт WiFi автоподключения остановлен"
+    exit 0
+}
+
+# Устанавливаем обработчики сигналов
+trap cleanup TERM INT QUIT
+
 # Функция проверки подключения к WiFi
 check_wifi_connection() {
     active_ssid=$(nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d':' -f2)

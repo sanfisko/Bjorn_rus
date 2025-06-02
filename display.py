@@ -447,9 +447,9 @@ class Display:
                 if self.shared_data.usb_active:
                     image.paste(self.shared_data.usb, (int(90 * self.scale_factor_x), int(4 * self.scale_factor_y)))
                 
-                # Индикатор WiFi автоподключения
+                # Индикатор WiFi автоподключения (справа от IDLE)
                 wifi_auto_icon = self.shared_data.get_wifi_auto_icon()
-                image.paste(wifi_auto_icon, (int(76 * self.scale_factor_x), int(4 * self.scale_factor_y)))
+                image.paste(wifi_auto_icon, (int(70 * self.scale_factor_x), int(65 * self.scale_factor_y)))
 
                 stats = [
                     (self.shared_data.target, (int(8 * self.scale_factor_x), int(22 * self.scale_factor_y)), (int(28 * self.scale_factor_x), int(22 * self.scale_factor_y)), str(self.shared_data.targetnbr)),
