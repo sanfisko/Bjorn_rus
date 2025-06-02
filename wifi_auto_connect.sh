@@ -30,6 +30,7 @@ update_status() {
     local message="$2"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     echo "{\"status\":\"$status\",\"message\":\"$message\",\"timestamp\":\"$timestamp\"}" > "$STATUS_FILE"
+    chmod 666 "$STATUS_FILE" 2>/dev/null || true
 }
 
 # Функция для создания начального статуса
