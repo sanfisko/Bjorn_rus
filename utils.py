@@ -765,10 +765,10 @@ method=auto
             if 'wifi_script_running' in params:
                 try:
                     if params['wifi_script_running']:
-                        # Start the script manually in background
+                        # Start the script manually in background with sudo
                         script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wifi_auto_connect.sh')
-                        subprocess.Popen([script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                        self.logger.info("WiFi auto-connect script started manually")
+                        subprocess.Popen(['sudo', script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        self.logger.info("WiFi auto-connect script started manually with sudo")
                     else:
                         # Stop the script by killing the process
                         subprocess.run("sudo pkill -f wifi_auto_connect.sh", shell=True, check=False)
