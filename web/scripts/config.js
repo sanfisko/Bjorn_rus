@@ -66,10 +66,10 @@ function generateConfigForm(config) {
             const tooltip = tooltips[key] || key;
             leftColumn.innerHTML += `
     
-                <div class="label-switch">
-                    <label class="switch">
+                <div class="label-switch" title="${tooltip}">
+                    <label class="switch" title="${tooltip}">
                         <input type="checkbox" id="${key}" name="${key}" ${checked} title="${tooltip}">
-                        <span class="slider round"></span>
+                        <span class="slider round" title="${tooltip}"></span>
                     </label>
                     <label for="${key}" title="${tooltip}">${key}</label>
                 </div>
